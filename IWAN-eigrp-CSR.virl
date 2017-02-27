@@ -11,10 +11,10 @@
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.54</entry>
             <entry key="config" type="String">!
-! Last configuration change at 11:58:44 EST Tue Feb 21 2017
-! NVRAM config last updated at 11:58:44 EST Tue Feb 21 2017
+! Last configuration change at 09:25:05 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:05 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -85,21 +85,6 @@ multilink bundle-name authenticated
 !
 !
 !
-key chain LAN-KEY
- key 1
-  key-string cisco123
-!
-crypto pki trustpoint TP-self-signed-3793417072
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-3793417072
- revocation-check none
- rsakeypair TP-self-signed-3793417072
-!
-!
-crypto pki certificate chain TP-self-signed-3793417072
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
-
-
 !
 !
 !
@@ -107,13 +92,12 @@ crypto pki certificate chain TP-self-signed-3793417072
 !
 !
 !
-license udi pid CSR1000V sn 9JE0Z7KXPWE
+!
+license udi pid CSR1000V sn 9NCI8PR0P1J
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$YkyD$ch9I8M1YZOY8svmroDnUs0
 !
@@ -205,56 +189,16 @@ interface GigabitEthernet4
  no mop sysid
 !
 !
-router eigrp IWAN
- !
- address-family ipv4 unicast vrf Site4 autonomous-system 1
-  !
-  af-interface default
-   authentication mode md5
-   authentication key-chain LAN-KEY
-  exit-af-interface
-  !
-  topology base
-  exit-af-topology
-  network 10.0.0.0
- exit-address-family
- !
- address-family ipv4 unicast vrf Site5 autonomous-system 1
-  !
-  af-interface default
-   authentication mode md5
-   authentication key-chain LAN-KEY
-  exit-af-interface
-  !
-  topology base
-  exit-af-topology
-  network 10.0.0.0
- exit-address-family
- !
- address-family ipv4 unicast vrf Site3 autonomous-system 1
-  !
-  af-interface default
-   authentication mode md5
-   authentication key-chain LAN-KEY
-  exit-af-interface
-  !
-  topology base
-  exit-af-topology
-  network 10.0.0.0
- exit-address-family
-!
-!
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip route vrf Site3 0.0.0.0 0.0.0.0 10.3.3.31
 ip ssh version 2
-!
 !
 ip sla 34
  udp-jitter 10.4.4.103 20000 source-ip 10.3.3.103 source-port 30000 codec g729a
@@ -353,7 +297,6 @@ ip sla 2301
  timeout 800
  frequency 1
 !
-!
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -372,23 +315,20 @@ control-plane
 line con 0
  stopbits 1
 line vty 0
+ exec-timeout 0 0
  login local
  transport input ssh
 line vty 1 4
+ exec-timeout 0 0
  login local
  length 0
  transport input ssh
 !
-ntp server 172.16.1.2
 ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
-!
-!
-!
-!
 pnp profile apicem-pnp
- transport http ipv4 100.64.31.100 port 80
+ transport http ipv4 172.16.1.100 port 80
  reconnect 1
 end</entry>
         </extensions>
@@ -402,10 +342,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.71</entry>
             <entry key="config" type="String">!
-! Last configuration change at 11:58:44 EST Tue Feb 21 2017
-! NVRAM config last updated at 11:58:44 EST Tue Feb 21 2017
+! Last configuration change at 09:25:05 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -461,21 +401,6 @@ multilink bundle-name authenticated
 !
 !
 !
-key chain WAN-KEY
- key 1
-  key-string cisco123
-!
-crypto pki trustpoint TP-self-signed-3138407336
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-3138407336
- revocation-check none
- rsakeypair TP-self-signed-3138407336
-!
-!
-crypto pki certificate chain TP-self-signed-3138407336
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
-
-
 !
 !
 !
@@ -483,13 +408,12 @@ crypto pki certificate chain TP-self-signed-3138407336
 !
 !
 !
-license udi pid CSR1000V sn 9JYGQJYSKQH
+!
+license udi pid CSR1000V sn 9BBV893H3UX
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$xc09$iCBorWZvzpY.1Qo.kTvNv/
 !
@@ -571,32 +495,15 @@ interface GigabitEthernet6
  no mop sysid
 !
 !
-router eigrp MPLS
- !
- address-family ipv4 unicast autonomous-system 100
-  !
-  af-interface default
-   authentication mode md5
-   authentication key-chain WAN-KEY
-  exit-af-interface
-  !
-  topology base
-  exit-af-topology
-  network 172.18.0.0
- exit-address-family
-!
-!
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip ssh version 2
-!
-!
 !
 !
 snmp-server community public RO
@@ -631,12 +538,9 @@ ntp server 172.16.1.2
 ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
-!
-!
-!
-!
 pnp profile apicem-pnp
- transport https ipv4 172.16.1.100 port 443
+ transport http ipv4 172.16.1.100 port 80
+ reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -651,10 +555,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.72</entry>
             <entry key="config" type="String">!
-! Last configuration change at 20:35:57 EST Tue Feb 21 2017
-! NVRAM config last updated at 20:35:57 EST Tue Feb 21 2017
+! Last configuration change at 09:25:05 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -724,28 +628,6 @@ multilink bundle-name authenticated
 !
 !
 !
-crypto pki trustpoint TP-self-signed-3050165207
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-3050165207
- revocation-check none
- rsakeypair TP-self-signed-3050165207
-!
-crypto pki trustpoint sdn-network-infra-iwan
- enrollment url http://100.64.12.100:80/ejbca/publicweb/apply/scep/sdnscep
- fqdn inet
- subject-name CN=CSR1000V_957X5VCVBPS_sdn-network-infra-iwan
- revocation-check crl
- rsakeypair sdn-network-infra-iwan
- auto-enroll 80 regenerate
-!
-!
-crypto pki certificate chain TP-self-signed-3050165207
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
-crypto pki certificate chain sdn-network-infra-iwan
- certificate ca 21383503081B9DAA nvram:sdn-network-#9DAACA.cer
- certificate 50C4937C8E190C5A nvram:sdn-network-#C5A.cer
-
-
 !
 !
 !
@@ -753,13 +635,12 @@ crypto pki certificate chain sdn-network-infra-iwan
 !
 !
 !
-license udi pid CSR1000V sn 957X5VCVBPS
+!
+license udi pid CSR1000V sn 901NI8HMWBG
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$6Th5$VWVPr9h/e8bfMx.gv5w0V1
 !
@@ -844,14 +725,12 @@ interface GigabitEthernet6
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip ssh version 2
-!
-!
 !
 !
 snmp-server community public RO
@@ -879,17 +758,11 @@ line vty 1 4
  length 0
  transport input ssh
 !
-ntp server 172.16.1.2
 ntp server vrf Mgmt-intf 172.16.1.2
-ntp server 100.64.12.100
-!
-!
-!
-!
 !
 !
 pnp profile apicem-pnp
- transport https ipv4 172.16.1.100 port 443 vrf Mgmt-intf
+ transport http ipv4 172.16.1.100 port 80
  reconnect 1
 end</entry>
         </extensions>
@@ -905,10 +778,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.11</entry>
             <entry key="config" type="String">!
-! Last configuration change at 11:58:43 EST Tue Feb 21 2017
-! NVRAM config last updated at 11:58:43 EST Tue Feb 21 2017
+! Last configuration change at 09:25:05 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -964,23 +837,6 @@ multilink bundle-name authenticated
 !
 !
 !
-crypto pki trustpoint TP-self-signed-53516969
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-53516969
- revocation-check none
- rsakeypair TP-self-signed-53516969
-!
-crypto pki trustpoint pnplabel
- enrollment pkcs12
- revocation-check none
-!
-!
-crypto pki certificate chain TP-self-signed-53516969
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
-crypto pki certificate chain pnplabel
- certificate ca 1678765865116672581919165364355172185923 nvram:Cisco#5923CA.cer
-
-
 !
 !
 !
@@ -988,13 +844,12 @@ crypto pki certificate chain pnplabel
 !
 !
 !
-license udi pid CSR1000V sn 9UQG5PFW5C2
+!
+license udi pid CSR1000V sn 993V1I35AOE
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$2Yzz$q3//PIj4a2RvVz4r4MMcA.
 !
@@ -1076,14 +931,12 @@ router ospf 1
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip ssh version 2
-!
-!
 !
 !
 snmp-server community public RO
@@ -1104,25 +957,25 @@ control-plane
 line con 0
  stopbits 1
 line vty 0
+ exec-timeout 0 0
  login local
  transport input ssh
 line vty 1
+ exec-timeout 0 0
  login local
  length 0
  transport input ssh
 line vty 2 4
+ exec-timeout 0 0
  login local
  transport input ssh
 !
 ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
-!
-!
-!
-!
 pnp profile apicem-pnp
- transport https ipv4 172.16.1.100 port 443
+ transport http ipv4 172.16.1.100 port 80
+ reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -1135,10 +988,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.13</entry>
             <entry key="config" type="String">!
-! Last configuration change at 11:58:44 EST Tue Feb 21 2017
-! NVRAM config last updated at 11:58:44 EST Tue Feb 21 2017
+! Last configuration change at 09:25:05 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -1194,28 +1047,6 @@ multilink bundle-name authenticated
 !
 !
 !
-crypto pki trustpoint TP-self-signed-3697458423
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-3697458423
- revocation-check none
- rsakeypair TP-self-signed-3697458423
-!
-crypto pki trustpoint sdn-network-infra-iwan
- enrollment url http://172.16.1.100:80/ejbca/publicweb/apply/scep/sdnscep
- fqdn core1
- subject-name CN=CSR1000V_95BTGDM4UTE_sdn-network-infra-iwan
- revocation-check crl
- rsakeypair sdn-network-infra-iwan
- auto-enroll 80 regenerate
-!
-!
-crypto pki certificate chain TP-self-signed-3697458423
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
-crypto pki certificate chain sdn-network-infra-iwan
- certificate ca 21383503081B9DAA nvram:sdn-network-#9DAACA.cer
- certificate 48849332692217E3 nvram:sdn-network-#17E3.cer
-
-
 !
 !
 !
@@ -1223,13 +1054,12 @@ crypto pki certificate chain sdn-network-infra-iwan
 !
 !
 !
-license udi pid CSR1000V sn 95BTGDM4UTE
+!
+license udi pid CSR1000V sn 91SC6FCZ943
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$UWD/$.pid6tkjP1VTiDLX6mHbz0
 !
@@ -1267,7 +1097,6 @@ interface Loopback0
 !
 interface GigabitEthernet1
  description OOB Management
- ip address 172.16.1.1 255.255.255.0 secondary
  ip address 172.16.1.13 255.255.255.0
  negotiation auto
  no mop enabled
@@ -1327,14 +1156,12 @@ router ospf 1
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip ssh version 2
-!
-!
 !
 !
 snmp-server community public RO
@@ -1355,13 +1182,16 @@ control-plane
 line con 0
  stopbits 1
 line vty 0
+ exec-timeout 0 0
  login local
  transport input ssh
 line vty 1
+ exec-timeout 0 0
  login local
  length 0
  transport input ssh
 line vty 2 4
+ exec-timeout 0 0
  login local
  transport input ssh
 !
@@ -1370,12 +1200,8 @@ ntp server vrf Mgmt-intf 172.16.1.2
 ntp server 172.16.1.100
 !
 !
-!
-!
-!
-!
 pnp profile apicem-pnp
- transport http ipv4 100.64.31.100 port 80
+ transport http ipv4 172.16.1.100 port 80
  reconnect 1
 end</entry>
         </extensions>
@@ -1390,10 +1216,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.12</entry>
             <entry key="config" type="String">!
-! Last configuration change at 11:58:43 EST Tue Feb 21 2017
-! NVRAM config last updated at 11:58:43 EST Tue Feb 21 2017
+! Last configuration change at 09:25:05 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:05 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -1449,23 +1275,6 @@ multilink bundle-name authenticated
 !
 !
 !
-crypto pki trustpoint TP-self-signed-3783483259
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-3783483259
- revocation-check none
- rsakeypair TP-self-signed-3783483259
-!
-crypto pki trustpoint pnplabel
- enrollment pkcs12
- revocation-check none
-!
-!
-crypto pki certificate chain TP-self-signed-3783483259
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
-crypto pki certificate chain pnplabel
- certificate ca 1678765865116672581919165364355172185923 nvram:Cisco#5923CA.cer
-
-
 !
 !
 !
@@ -1473,13 +1282,12 @@ crypto pki certificate chain pnplabel
 !
 !
 !
-license udi pid CSR1000V sn 9XFH7KDGJU5
+!
+license udi pid CSR1000V sn 9N8JE3G56CR
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$qQEv$meAeWywAb5u2KeW7KusrM.
 !
@@ -1562,14 +1370,12 @@ router ospf 1
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip ssh version 2
-!
-!
 !
 !
 snmp-server community public RO
@@ -1590,25 +1396,25 @@ control-plane
 line con 0
  stopbits 1
 line vty 0
+ exec-timeout 0 0
  login local
  transport input ssh
 line vty 1
+ exec-timeout 0 0
  login local
  length 0
  transport input ssh
 line vty 2 4
+ exec-timeout 0 0
  login local
  transport input ssh
 !
 ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
-!
-!
-!
-!
 pnp profile apicem-pnp
- transport https ipv4 172.16.1.100 port 443
+ transport http ipv4 172.16.1.100 port 80
+ reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -1621,10 +1427,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.23</entry>
             <entry key="config" type="String">!
-! Last configuration change at 11:58:43 EST Tue Feb 21 2017
-! NVRAM config last updated at 11:58:44 EST Tue Feb 21 2017
+! Last configuration change at 09:25:05 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:05 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -1682,7 +1488,13 @@ multilink bundle-name authenticated
 !
 key chain LAN-KEY
  key 1
-  key-string cisco123
+   key-string cisco123
+!
+crypto pki trustpoint TP-self-signed-3397479727
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-3397479727
+ revocation-check none
+ rsakeypair TP-self-signed-3397479727
 !
 crypto pki trustpoint TP-self-signed-1112054880
  enrollment selfsigned
@@ -1699,13 +1511,12 @@ crypto pki trustpoint sdn-network-infra-iwan
  auto-enroll 80 regenerate
 !
 !
+crypto pki certificate chain TP-self-signed-3397479727
+ certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
 crypto pki certificate chain TP-self-signed-1112054880
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
 crypto pki certificate chain sdn-network-infra-iwan
  certificate ca 21383503081B9DAA nvram:sdn-network-#9DAACA.cer
  certificate 2FB8EF1D80EA5AC5 nvram:sdn-network-#5AC5.cer
-
-
 !
 !
 !
@@ -1713,13 +1524,11 @@ crypto pki certificate chain sdn-network-infra-iwan
 !
 !
 !
-license udi pid CSR1000V sn 9FJYBUL4P3R
+license udi pid CSR1000V sn 9Q67G5XY1VK
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$/QoY$WxZBpbMZq6hrP54bd1INk.
 !
@@ -1825,17 +1634,15 @@ router ospf 1
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
-!
 ip sla responder
 ip sla responder tcp-connect ipaddress 10.10.100.20 port 7000
-!
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -1870,12 +1677,8 @@ ntp server vrf Mgmt-intf 172.16.1.2
 ntp server 172.16.1.100
 !
 !
-!
-!
-!
-!
 pnp profile apicem-pnp
- transport http ipv4 100.64.31.100 port 80
+ transport http ipv4 172.16.1.100 port 80
  reconnect 1
 end</entry>
         </extensions>
@@ -1891,10 +1694,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.21</entry>
             <entry key="config" type="String">!
-! Last configuration change at 11:58:43 EST Tue Feb 21 2017
-! NVRAM config last updated at 11:58:43 EST Tue Feb 21 2017
+! Last configuration change at 09:25:05 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -1956,17 +1759,8 @@ crypto pki trustpoint TP-self-signed-2066765782
  revocation-check none
  rsakeypair TP-self-signed-2066765782
 !
-crypto pki trustpoint pnplabel
- enrollment pkcs12
- revocation-check none
-!
 !
 crypto pki certificate chain TP-self-signed-2066765782
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
-crypto pki certificate chain pnplabel
- certificate ca 1678765865116672581919165364355172185923 nvram:Cisco#5923CA.cer
-
-
 !
 !
 !
@@ -1974,13 +1768,11 @@ crypto pki certificate chain pnplabel
 !
 !
 !
-license udi pid CSR1000V sn 9OU423F19VJ
+license udi pid CSR1000V sn 9SZCHD9WRTG
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$iKgX$eZkjpKqbGzzJpniedVljV.
 !
@@ -2063,14 +1855,12 @@ router ospf 1
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip ssh version 2
-!
-!
 !
 !
 snmp-server community public RO
@@ -2104,12 +1894,9 @@ line vty 2 4
 ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
-!
-!
-!
-!
 pnp profile apicem-pnp
- transport https ipv4 172.16.1.100 port 443
+ transport http ipv4 172.16.1.100 port 80
+ reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -2122,10 +1909,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.22</entry>
             <entry key="config" type="String">!
-! Last configuration change at 11:58:43 EST Tue Feb 21 2017
-! NVRAM config last updated at 11:58:43 EST Tue Feb 21 2017
+! Last configuration change at 09:25:05 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -2181,23 +1968,6 @@ multilink bundle-name authenticated
 !
 !
 !
-crypto pki trustpoint TP-self-signed-2703695495
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-2703695495
- revocation-check none
- rsakeypair TP-self-signed-2703695495
-!
-crypto pki trustpoint pnplabel
- enrollment pkcs12
- revocation-check none
-!
-!
-crypto pki certificate chain TP-self-signed-2703695495
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
-crypto pki certificate chain pnplabel
- certificate ca 1678765865116672581919165364355172185923 nvram:Cisco#5923CA.cer
-
-
 !
 !
 !
@@ -2205,13 +1975,12 @@ crypto pki certificate chain pnplabel
 !
 !
 !
-license udi pid CSR1000V sn 990Y2NL61QQ
+!
+license udi pid CSR1000V sn 9JO0NU3GTUC
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$PYLo$hk0rpcD5H40kQdBsPqTlp1
 !
@@ -2294,14 +2063,12 @@ router ospf 1
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip ssh version 2
-!
-!
 !
 !
 snmp-server community public RO
@@ -2322,9 +2089,11 @@ control-plane
 line con 0
  stopbits 1
 line vty 0
+ exec-timeout 0 0
  login local
  transport input ssh
 line vty 1 4
+ exec-timeout 0 0
  login local
  length 0
  transport input ssh
@@ -2332,12 +2101,9 @@ line vty 1 4
 ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
-!
-!
-!
-!
 pnp profile apicem-pnp
- transport https ipv4 172.16.1.100 port 443
+ transport http ipv4 172.16.1.100 port 80
+ reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -2349,6 +2115,160 @@ end</entry>
             <entry key="static_mac" type="String">fa:16:00:00:51:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.51</entry>
+            <entry key="config" type="String">!
+! Last configuration change at 14:25:07 UTC Fri Feb 24 2017
+!
+version 15.6
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname r51
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+ip domain name rbclab.local
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 9SB0Z4MFA34
+!
+spanning-tree extend system-id
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+! 
+! 
+! 
+! 
+! 
+!
+!
+interface GigabitEthernet1
+ description OOB Management
+ vrf forwarding Mgmt-intf
+ ip address 172.16.1.51 255.255.255.0
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet3
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet4
+ no ip address
+ shutdown
+ negotiation auto
+!
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip tftp source-interface GigabitEthernet1
+!
+!
+!
+!
+control-plane
+!
+ !
+ !
+ !
+ !
+!
+!
+!
+!
+!
+line con 0
+ stopbits 1
+line vty 0 4
+ exec-timeout 0 0
+ login
+!
+ntp server vrf Mgmt-intf 172.16.1.2
+!
+!
+pnp profile apicem-pnp
+ transport http ipv4 172.16.1.100 port 80
+ reconnect 1
+end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
@@ -2359,6 +2279,157 @@ end</entry>
             <entry key="static_mac" type="String">fa:16:00:00:52:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.52</entry>
+            <entry key="config" type="String">!
+! Last configuration change at 14:12:23 UTC Fri Feb 24 2017
+!
+version 15.6
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname r52
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+ip domain name rbclab.local
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 9RLLZSOYYKS
+!
+spanning-tree extend system-id
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+! 
+! 
+! 
+! 
+! 
+!
+!
+interface GigabitEthernet1
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet2
+ ip address dhcp
+ negotiation auto
+!
+interface GigabitEthernet3
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet4
+ no ip address
+ shutdown
+ negotiation auto
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+ !
+ !
+ !
+ !
+!
+!
+!
+!
+!
+line con 0
+ stopbits 1
+line vty 0
+ exec-timeout 0 0
+ login
+line vty 1
+ exec-timeout 0 0
+ login
+ length 0
+line vty 2 4
+ exec-timeout 0 0
+ login
+!
+!
+!
+pnp profile apicem-pnp
+ transport http ipv4 172.16.1.100 port 80
+ reconnect 1
+end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
@@ -2370,10 +2441,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.14</entry>
             <entry key="config" type="String">!
-! Last configuration change at 11:41:46 EST Tue Feb 21 2017
-! NVRAM config last updated at 11:58:46 EST Tue Feb 21 2017 by cisco
+! Last configuration change at 09:12:03 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:07 EST Fri Feb 24 2017 by cisco
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -2429,24 +2500,6 @@ multilink bundle-name authenticated
 !
 !
 !
-key chain LAN-KEY
- key 1
-  key-string cisco123
-key chain WAN-KEY
- key 1
-  key-string cisco123
-!
-crypto pki trustpoint TP-self-signed-3961626890
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-3961626890
- revocation-check none
- rsakeypair TP-self-signed-3961626890
-!
-!
-crypto pki certificate chain TP-self-signed-3961626890
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
-
-
 !
 !
 !
@@ -2454,13 +2507,12 @@ crypto pki certificate chain TP-self-signed-3961626890
 !
 !
 !
-license udi pid CSR1000V sn 95VR7MLTZOO
+!
+license udi pid CSR1000V sn 9NMLF68LZBX
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$p/ds$SZJcepfb0TWgYb5OBVceB/
 !
@@ -2543,18 +2595,16 @@ ip nat inside source static 172.16.1.100 100.64.31.100 extendable
 ip nat inside source static 172.16.1.100 172.18.31.100 extendable
 ip nat inside source list 1 interface GigabitEthernet3 overload extended
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip route 100.64.0.0 255.255.0.0 100.64.31.2
 ip route 172.18.0.0 255.255.0.0 172.18.31.2
 ip ssh version 2
 !
-!
 access-list 1 permit any
-!
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -2587,9 +2637,9 @@ line vty 2 4
 ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
-!
-!
-!
+pnp profile apicem-pnp
+ transport http ipv4 172.16.1.100 port 80
+ reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -2602,9 +2652,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.41</entry>
             <entry key="config" type="String">!
-! Last configuration change at 21:49:50 EST Tue Feb 21 2017
+! Last configuration change at 09:25:09 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:09 EST Fri Feb 24 2017
 !
-version 15.5
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -2635,8 +2686,6 @@ clock timezone EST -5 0
 !
 !
 !
-!
-!
 
 
 
@@ -2654,28 +2703,14 @@ ip domain name rbclab.local
 !
 subscriber templating
 !
+!
+!
 multilink bundle-name authenticated
 !
 !
 !
 !
 !
-key chain LAN-KEY
- key 1
-   key-string cisco123
-key chain WAN-KEY
- key 1
-   key-string cisco123
-!
-crypto pki trustpoint TP-self-signed-159876152
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-159876152
- revocation-check none
- rsakeypair TP-self-signed-159876152
-!
-!
-crypto pki certificate chain TP-self-signed-159876152
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
 !
 !
 !
@@ -2683,7 +2718,8 @@ crypto pki certificate chain TP-self-signed-159876152
 !
 !
 !
-license udi pid CSR1000V sn 98EWM3CEKKY
+!
+license udi pid CSR1000V sn 93WFLUFPN98
 license accept end user agreement
 license boot level ax
 !
@@ -2779,15 +2815,21 @@ control-plane
 line con 0
  stopbits 1
 line vty 0
+ exec-timeout 0 0
  login local
  transport input ssh
 line vty 1 4
+ exec-timeout 0 0
  login local
  length 0
  transport input ssh
 !
 ntp server vrf Mgmt-intf 172.16.1.2
 !
+!
+pnp profile apicem-pnp
+ transport http ipv4 172.16.1.100 port 80
+ reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -2800,10 +2842,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.10</entry>
             <entry key="config" type="String">!
-! Last configuration change at 11:58:48 EST Tue Feb 21 2017
-! NVRAM config last updated at 11:58:49 EST Tue Feb 21 2017
+! Last configuration change at 09:25:09 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:10 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -2859,24 +2901,19 @@ multilink bundle-name authenticated
 !
 !
 !
-key chain LAN-KEY
- key 1
-  key-string cisco123
-!
-crypto pki trustpoint TP-self-signed-350213532
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-350213532
- revocation-check none
- rsakeypair TP-self-signed-350213532
 !
 !
-
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 9GEQHBGXMK7
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$jw2d$d8ieM1k2tpoiCxW/V15v00
 !
@@ -2933,15 +2970,13 @@ interface GigabitEthernet2
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip route 0.0.0.0 0.0.0.0 10.1.110.1
 ip ssh version 2
-!
-!
 !
 !
 snmp-server community public RO
@@ -2962,9 +2997,11 @@ control-plane
 line con 0
  stopbits 1
 line vty 0
+ exec-timeout 0 0
  login local
  transport input ssh
 line vty 1 4
+ exec-timeout 0 0
  login local
  length 0
  transport input ssh
@@ -2972,12 +3009,9 @@ line vty 1 4
 ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
-!
-!
-!
-!
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
+ reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2">
@@ -2992,10 +3026,10 @@ end</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">172.16.1.20</entry>
             <entry key="config" type="String">!
-! Last configuration change at 16:58:47 EST Tue Feb 21 2017
-! NVRAM config last updated at 16:58:48 EST Tue Feb 21 2017
+! Last configuration change at 09:25:09 EST Fri Feb 24 2017
+! NVRAM config last updated at 09:25:09 EST Fri Feb 24 2017
 !
-version 16.3
+version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -3051,23 +3085,6 @@ multilink bundle-name authenticated
 !
 !
 !
-crypto pki trustpoint TP-self-signed-649800718
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-649800718
- revocation-check none
- rsakeypair TP-self-signed-649800718
-!
-crypto pki trustpoint pnplabel
- enrollment pkcs12
- revocation-check none
-!
-!
-crypto pki certificate chain TP-self-signed-649800718
- certificate self-signed 01 nvram:IOS-Self-Sig#2.cer
-crypto pki certificate chain pnplabel
- certificate ca 1678765865116672581919165364355172185923 nvram:Cisco#5923CA.cer
-
-
 !
 !
 !
@@ -3075,13 +3092,12 @@ crypto pki certificate chain pnplabel
 !
 !
 !
-license udi pid CSR1000V sn 92T753CQEPP
+!
+license udi pid CSR1000V sn 9AA6L1O5JWV
 license accept end user agreement
 license boot level ax
-diagnostic bootup level minimal
 !
 spanning-tree extend system-id
-!
 !
 username cisco privilege 15 secret 5 $1$Xq7F$aJ19NI0m93Yo6uYaqKLTh.
 !
@@ -3128,7 +3144,6 @@ interface GigabitEthernet1
 interface GigabitEthernet2
  description R21
  ip address 10.2.220.20 255.255.255.0
- ip ospf network point-to-point
  load-interval 30
  negotiation auto
  cdp enable
@@ -3139,15 +3154,13 @@ interface GigabitEthernet2
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
+!
 no ip http server
 ip http authentication local
 no ip http secure-server
-!
 ip tftp source-interface GigabitEthernet1
 ip route 0.0.0.0 0.0.0.0 10.2.220.1
 ip ssh version 2
-!
-!
 !
 !
 snmp-server community public RO
@@ -3168,9 +3181,11 @@ control-plane
 line con 0
  stopbits 1
 line vty 0
+ exec-timeout 0 0
  login local
  transport input ssh
 line vty 1 4
+ exec-timeout 0 0
  login local
  length 0
  transport input ssh
@@ -3178,12 +3193,9 @@ line vty 1 4
 ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
-!
-!
-!
-!
 pnp profile apicem-pnp
- transport https ipv4 172.16.1.100 port 443
+ transport http ipv4 172.16.1.100 port 80
+ reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -3191,7 +3203,7 @@ end</entry>
     <node name="iosvl2-1" type="SIMPLE" subtype="IOSvL2" location="356,218">
         <extensions>
             <entry key="config" type="String">!
-! Last configuration change at 16:55:29 UTC Tue Feb 21 2017
+! Last configuration change at 14:24:17 UTC Fri Feb 24 2017
 !
 version 15.2
 service timestamps debug datetime msec
@@ -3325,11 +3337,12 @@ end</entry>
         <interface id="2" name="GigabitEthernet0/3"/>
         <interface id="3" name="GigabitEthernet1/0"/>
         <interface id="4" name="GigabitEthernet1/1"/>
+        <interface id="5" name="GigabitEthernet1/2"/>
     </node>
     <node name="iosvl2-2" type="SIMPLE" subtype="IOSvL2" location="662,221">
         <extensions>
             <entry key="config" type="String">!
-! Last configuration change at 16:56:28 UTC Tue Feb 21 2017
+! Last configuration change at 14:23:30 UTC Fri Feb 24 2017
 !
 version 15.2
 service timestamps debug datetime msec
@@ -3460,7 +3473,7 @@ end</entry>
     <node name="iosvl2-3" type="SIMPLE" subtype="IOSvL2" location="653,603">
         <extensions>
             <entry key="config" type="String">!
-! Last configuration change at 16:57:22 UTC Tue Feb 21 2017
+! Last configuration change at 14:24:39 UTC Fri Feb 24 2017
 !
 version 15.2
 service timestamps debug datetime msec
