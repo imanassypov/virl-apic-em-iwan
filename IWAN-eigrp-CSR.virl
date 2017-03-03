@@ -5,335 +5,6 @@
         <entry key="management_lxc" type="Boolean">true</entry>
         <entry key="management_network" type="String">user</entry>
     </extensions>
-    <node name="R1" type="SIMPLE" subtype="CSR1000v" location="580,664">
-        <extensions>
-            <entry key="static_mac" type="String">fa:16:00:00:61:00</entry>
-            <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="config" type="String">!
-! Last configuration change at 09:25:05 EST Fri Feb 24 2017
-! NVRAM config last updated at 09:25:05 EST Fri Feb 24 2017
-!
-version 15.6
-service timestamps debug datetime msec
-service timestamps log datetime localtime show-timezone
-no platform punt-keepalive disable-kernel-core
-platform console serial
-!
-hostname r1
-!
-boot-start-marker
-boot system flash bootflash:csr1000v-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
-boot-end-marker
-!
-!
-vrf definition Mgmt-intf
- !
- address-family ipv4
- exit-address-family
-!
-vrf definition Site3
- !
- address-family ipv4
- exit-address-family
-!
-vrf definition Site4
- !
- address-family ipv4
- exit-address-family
-!
-vrf definition Site5
- !
- address-family ipv4
- exit-address-family
-!
-enable secret 5 $1$5LXE$VdCIrbMGLusjo.uVtDQrq1
-!
-no aaa new-model
-clock timezone EST -5 0
-!
-!
-!
-!
-!
-!
-!
-!
-!
-no ip domain lookup
-ip domain name rbclab.local
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-subscriber templating
-!
-!
-!
-multilink bundle-name authenticated
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-license udi pid CSR1000V sn 9NCI8PR0P1J
-license accept end user agreement
-license boot level ax
-!
-spanning-tree extend system-id
-!
-username cisco privilege 15 secret 5 $1$YkyD$ch9I8M1YZOY8svmroDnUs0
-!
-redundancy
-!
-!
-!
-!
-!
-cdp run
-!
-! 
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-! 
-! 
-! 
-! 
-! 
-! 
-!
-!
-interface Loopback3
- description Used to Demonstrate OSPF External Routes in Topology
- vrf forwarding Site3
- ip address 3.3.3.3 255.255.255.0
-!
-interface Loopback4
- description Used to Demonstrate OSPF External Routes in Topology
- vrf forwarding Site4
- ip address 4.4.4.4 255.255.255.0
-!
-interface GigabitEthernet1
- description OOB Management
- vrf forwarding Mgmt-intf
- ip address 172.16.1.54 255.255.255.0
- negotiation auto
- no mop enabled
- no mop sysid
-!
-interface GigabitEthernet2
- description R31
- vrf forwarding Site3
- ip address 10.3.3.100 255.255.255.0 secondary
- ip address 10.3.3.101 255.255.255.0 secondary
- ip address 10.3.3.102 255.255.255.0 secondary
- ip address 10.3.3.103 255.255.255.0 secondary
- ip address 10.3.3.200 255.255.255.0 secondary
- ip address 10.3.3.201 255.255.255.0 secondary
- ip address 10.3.3.1 255.255.255.0
- negotiation auto
- cdp enable
- no mop enabled
- no mop sysid
-!
-interface GigabitEthernet3
- description R41
- vrf forwarding Site4
- ip address 10.4.4.100 255.255.255.0 secondary
- ip address 10.4.4.101 255.255.255.0 secondary
- ip address 10.4.4.102 255.255.255.0 secondary
- ip address 10.4.4.103 255.255.255.0 secondary
- ip address 10.4.4.1 255.255.255.0
- negotiation auto
- cdp enable
- no mop enabled
- no mop sysid
-!
-interface GigabitEthernet4
- description R512 &amp;amp;amp; R52
- vrf forwarding Site5
- ip address 10.5.5.100 255.255.255.0 secondary
- ip address 10.5.5.101 255.255.255.0 secondary
- ip address 10.5.5.102 255.255.255.0 secondary
- ip address 10.5.5.1 255.255.255.0
- negotiation auto
- cdp enable
- no mop enabled
- no mop sysid
-!
-!
-virtual-service csr_mgmt
-!
-ip forward-protocol nd
-!
-no ip http server
-ip http authentication local
-no ip http secure-server
-ip tftp source-interface GigabitEthernet1
-ip route vrf Site3 0.0.0.0 0.0.0.0 10.3.3.31
-ip ssh version 2
-!
-ip sla 34
- udp-jitter 10.4.4.103 20000 source-ip 10.3.3.103 source-port 30000 codec g729a
- tos 184
- vrf Site3
- threshold 500
- timeout 600
- frequency 1
-ip sla schedule 34 life forever start-time now
-ip sla 43
- udp-jitter 10.3.3.103 20000 source-ip 10.4.4.103 source-port 30000 codec g729a
- tos 184
- vrf Site4
- threshold 500
- timeout 600
- frequency 1
-ip sla 1300
- udp-jitter 10.1.100.10 20000 source-ip 10.3.3.100 source-port 30000 codec g729a
- tos 184
- vrf Site3
- threshold 500
- timeout 600
- frequency 1
-ip sla schedule 1300 life forever start-time now
-ip sla 1301
- icmp-echo 10.1.101.10 source-ip 10.3.3.101
- request-data-size 64
- vrf Site3
- threshold 800
- timeout 800
- frequency 1
-ip sla schedule 1301 life forever start-time now
-ip sla 1302
- tcp-connect 10.10.100.10 7000 source-ip 10.3.3.102 source-port 7000
- tos 72
- vrf Site3
- threshold 800
- timeout 800
- frequency 5
-ip sla schedule 1302 life forever start-time now
-ip sla 1400
- udp-jitter 10.1.100.10 20000 source-ip 10.4.4.100 source-port 30000 codec g729a
- tos 184
- vrf Site4
- threshold 500
- timeout 600
- frequency 1
-ip sla 1401
- icmp-echo 10.1.101.10 source-ip 10.4.4.101
- request-data-size 64
- vrf Site4
- threshold 800
- timeout 800
- frequency 1
-ip sla 1402
- tcp-connect 10.10.100.20 7000 source-ip 10.4.4.102 source-port 7000
- tos 72
- vrf Site4
- threshold 800
- timeout 800
- frequency 5
-ip sla schedule 1402 life forever start-time now
-ip sla 1500
- udp-jitter 10.1.100.10 20000 source-ip 10.5.5.100 source-port 30000 codec g729a
- tos 184
- vrf Site5
- threshold 500
- timeout 600
- frequency 1
-ip sla 1501
- icmp-echo 10.1.101.10 source-ip 10.5.5.101
- request-data-size 64
- vrf Site5
- threshold 800
- timeout 800
- frequency 1
-ip sla 1502
- tcp-connect 10.1.100.10 7000 source-ip 10.5.5.102 source-port 7000
- tos 72
- vrf Site5
- threshold 800
- timeout 800
- frequency 1
-ip sla 2300
- udp-jitter 10.2.100.20 20000 source-ip 10.3.3.200 source-port 30000 codec g729a
- tos 184
- vrf Site3
- threshold 500
- timeout 600
- frequency 1
-ip sla 2301
- icmp-echo 10.2.101.20 source-ip 10.3.3.201
- request-data-size 64
- vrf Site3
- threshold 800
- timeout 800
- frequency 1
-!
-ntp server 172.16.1.100
-!
-snmp-server community public RO
-snmp-server community private RW
-!
-!
-control-plane
-!
- !
- !
- !
- !
-!
-!
-!
-!
-!
-line con 0
- exec-timeout 0 0
- stopbits 1
-line vty 0
- exec-timeout 0 0
- login local
- transport input ssh
-line vty 1 4
- exec-timeout 0 0
- login local
- length 0
- transport input ssh
-!
-!
-!
-pnp profile apicem-pnp
- transport http ipv4 172.16.1.100 port 80
- reconnect 1
-end</entry>
-        </extensions>
-        <interface id="0" name="GigabitEthernet2"/>
-        <interface id="1" name="GigabitEthernet3"/>
-        <interface id="2" name="GigabitEthernet4"/>
-    </node>
     <node name="MPLS" type="SIMPLE" subtype="CSR1000v" location="432,433">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:31:00</entry>
@@ -374,7 +45,7 @@ clock timezone EST -5 0
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -501,7 +172,7 @@ ip ssh version 2
 !
 ip route 0.0.0.0 0.0.0.0 172.18.31.1
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -585,20 +256,20 @@ clock timezone EST -5 0
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 ip dhcp pool 100.64.41.0
  network 100.64.41.0 255.255.255.252
  default-router 100.64.41.2 
  option 43 ascii "5A1D;B2;K4;I100.64.31.100;J80"
- domain-name rbclab.local
+ domain-name iwanlab.local
  lease 0 0 30
 !
 ip dhcp pool 100.64.51.0
  network 100.64.51.0 255.255.255.252
  default-router 100.64.51.2 
  option 43 ascii "5A1D;B2;K4;I100.64.31.100;J80"
- domain-name rbclab.local
+ domain-name iwanlab.local
  lease 0 0 30
 !
 !
@@ -746,7 +417,7 @@ ip ssh version 2
 !
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -830,7 +501,7 @@ clock timezone EST -5 0
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -953,7 +624,7 @@ ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -1030,7 +701,7 @@ no aaa new-model
 clock timezone EST -5 0
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 subscriber templating
 !
@@ -1131,7 +802,7 @@ ip ssh version 2
 !
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -1219,7 +890,7 @@ clock timezone EST -5 0
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -1343,7 +1014,7 @@ ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -1428,7 +1099,7 @@ clock timezone EST -5 0
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -1576,7 +1247,7 @@ ip ssh version 2
 ip sla responder
 ip sla responder tcp-connect ipaddress 10.10.100.20 port 7000
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -1662,7 +1333,7 @@ clock timezone EST -5 0
 
 
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -1784,7 +1455,7 @@ ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -1866,7 +1537,7 @@ clock timezone EST -5 0
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -1990,7 +1661,7 @@ ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -2067,7 +1738,7 @@ no aaa new-model
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -2160,7 +1831,7 @@ no ip http server
 no ip http secure-server
 ip tftp source-interface GigabitEthernet1
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -2225,7 +1896,7 @@ no aaa new-model
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -2316,7 +1987,7 @@ no ip http secure-server
 !
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -2389,7 +2060,7 @@ clock timezone EST -5 0
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -2521,7 +2192,7 @@ ip access-list standard NATOUT
 !
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -2565,7 +2236,7 @@ end</entry>
         <interface id="1" name="GigabitEthernet3"/>
         <interface id="2" name="GigabitEthernet4"/>
     </node>
-    <node name="R41" type="SIMPLE" subtype="CSR1000v" location="485,537">
+    <node name="R41" type="SIMPLE" subtype="CSR1000v" location="368,544">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:41:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
@@ -2605,7 +2276,7 @@ clock timezone EST -5 0
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -2711,7 +2382,7 @@ ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -2792,7 +2463,7 @@ clock timezone EST -5 0
 !
 !
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -2889,7 +2560,7 @@ ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 172.16.1.13
 ip ssh version 2
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -2975,7 +2646,7 @@ clock timezone EST -5 0
 
 
 no ip domain lookup
-ip domain name rbclab.local
+ip domain name iwanlab.local
 !
 !
 !
@@ -3074,7 +2745,7 @@ ip route 0.0.0.0 0.0.0.0 10.2.220.1
 ip ssh version 2
 !
 !
-ntp server 172.16.1.100
+ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -3103,8 +2774,6 @@ line vty 1 4
  length 0
  transport input ssh
 !
-ntp server vrf Mgmt-intf 172.16.1.2
-!
 !
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
@@ -3115,7 +2784,7 @@ end</entry>
     </node>
     <node name="iosvl2-1" type="SIMPLE" subtype="IOSvL2" location="356,218">
         <extensions>
-            <entry key="config" type="String">! IOSvL2 Config generated on 2017-03-02 16:06
+            <entry key="config" type="String">! IOSvL2 Config generated on 2017-03-03 10:16
 ! by autonetkit_0.23.5
 !
 version 15.2
@@ -3226,7 +2895,9 @@ interface GigabitEthernet1/1
   no shutdown
 !
 interface GigabitEthernet1/2
-  description GigabitEthernet1/2
+  description to ostinato1
+  switchport access vlan 2
+  switchport mode access
   no shutdown
 !
 !
@@ -3257,7 +2928,7 @@ end
     </node>
     <node name="iosvl2-2" type="SIMPLE" subtype="IOSvL2" location="662,221">
         <extensions>
-            <entry key="config" type="String">! IOSvL2 Config generated on 2017-03-02 16:06
+            <entry key="config" type="String">! IOSvL2 Config generated on 2017-03-03 10:16
 ! by autonetkit_0.23.5
 !
 version 15.2
@@ -3361,6 +3032,12 @@ interface GigabitEthernet1/0
   switchport mode access
   no shutdown
 !
+interface GigabitEthernet1/1
+  description to ostinato2
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
+!
 !
 ip forward-protocol nd
 !
@@ -3384,10 +3061,11 @@ end
         <interface id="1" name="GigabitEthernet0/2"/>
         <interface id="2" name="GigabitEthernet0/3"/>
         <interface id="3" name="GigabitEthernet1/0"/>
+        <interface id="4" name="GigabitEthernet1/1"/>
     </node>
     <node name="iosvl2-3" type="SIMPLE" subtype="IOSvL2" location="653,603" excludeFromLaunch="true">
         <extensions>
-            <entry key="config" type="String">! IOSvL2 Config generated on 2017-03-02 16:06
+            <entry key="config" type="String">! IOSvL2 Config generated on 2017-03-03 10:16
 ! by autonetkit_0.23.5
 !
 version 15.2
@@ -3480,7 +3158,7 @@ interface GigabitEthernet0/2
   no shutdown
 !
 interface GigabitEthernet0/3
-  description to R1
+  description to ostinato5
   switchport access vlan 2
   switchport mode access
   no shutdown
@@ -3514,33 +3192,360 @@ end
         </extensions>
         <interface id="0" name="link0"/>
     </node>
+    <node name="ostinato4" type="SIMPLE" subtype="lxc-ostinato-drone" location="373,685">
+        <extensions>
+            <entry key="config" type="string">#cloud-config
+bootcmd:
+- ln -s -t /etc/rc.d /etc/rc.local
+hostname: ostinato4
+manage_etc_hosts: true
+runcmd:
+- systemctl start rc-local
+- sed -i '/^\s*PasswordAuthentication\s\+no/d' /etc/ssh/sshd_config
+- echo "UseDNS no" &gt;&gt; /etc/ssh/sshd_config
+- service ssh restart
+- service sshd restart
+users:
+- default
+- gecos: User configured by VIRL Configuration Engine 0.23.9
+  lock-passwd: false
+  name: cisco
+  plain-text-passwd: cisco
+  shell: /bin/bash
+  ssh-authorized-keys:
+  - VIRL-USER-SSH-PUBLIC-KEY
+  sudo: ALL=(ALL) ALL
+write_files:
+- path: /etc/systemd/system/dhclient@.service
+  content: |
+    [Unit]
+    Description=Run dhclient on %i interface
+    After=network.target
+    [Service]
+    Type=oneshot
+    ExecStart=/sbin/dhclient %i -pf /var/run/dhclient.%i.pid -lf /var/lib/dhclient/dhclient.%i.lease
+    RemainAfterExit=yes
+  owner: root:root
+  permissions: '0644'
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    ifconfig eth1 up 10.0.0.33 netmask 255.255.255.252
+    route add -net 10.0.0.0/16 gw 10.0.0.34 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.34 dev eth1
+    exit 0
+</entry>
+        </extensions>
+        <interface id="0" name="eth1" ipv4="10.0.0.33" netPrefixLenV4="30"/>
+    </node>
+    <node name="ostinato5" type="SIMPLE" subtype="lxc-ostinato-drone" location="653,689" excludeFromLaunch="true">
+        <extensions>
+            <entry key="config" type="string">#cloud-config
+bootcmd:
+- ln -s -t /etc/rc.d /etc/rc.local
+hostname: ostinato5
+manage_etc_hosts: true
+runcmd:
+- systemctl start rc-local
+- sed -i '/^\s*PasswordAuthentication\s\+no/d' /etc/ssh/sshd_config
+- echo "UseDNS no" &gt;&gt; /etc/ssh/sshd_config
+- service ssh restart
+- service sshd restart
+users:
+- default
+- gecos: User configured by VIRL Configuration Engine 0.23.9
+  lock-passwd: false
+  name: cisco
+  plain-text-passwd: cisco
+  shell: /bin/bash
+  ssh-authorized-keys:
+  - VIRL-USER-SSH-PUBLIC-KEY
+  sudo: ALL=(ALL) ALL
+write_files:
+- path: /etc/systemd/system/dhclient@.service
+  content: |
+    [Unit]
+    Description=Run dhclient on %i interface
+    After=network.target
+    [Service]
+    Type=oneshot
+    ExecStart=/sbin/dhclient %i -pf /var/run/dhclient.%i.pid -lf /var/lib/dhclient/dhclient.%i.lease
+    RemainAfterExit=yes
+  owner: root:root
+  permissions: '0644'
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    ifconfig eth1 up 10.0.0.1 netmask 255.255.255.248
+    route add -net 10.0.0.0/16 gw 10.0.0.2 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.2 dev eth1
+    route add -net 10.0.0.0/16 gw 10.0.0.3 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.3 dev eth1
+    exit 0
+</entry>
+        </extensions>
+        <interface id="0" name="eth1" ipv4="10.0.0.1" netPrefixLenV4="29"/>
+    </node>
+    <node name="ostinato1" type="SIMPLE" subtype="lxc-ostinato-drone" location="467,173">
+        <extensions>
+            <entry key="config" type="string">#cloud-config
+bootcmd:
+- ln -s -t /etc/rc.d /etc/rc.local
+hostname: ostinato1
+manage_etc_hosts: true
+runcmd:
+- systemctl start rc-local
+- sed -i '/^\s*PasswordAuthentication\s\+no/d' /etc/ssh/sshd_config
+- echo "UseDNS no" &gt;&gt; /etc/ssh/sshd_config
+- service ssh restart
+- service sshd restart
+users:
+- default
+- gecos: User configured by VIRL Configuration Engine 0.23.9
+  lock-passwd: false
+  name: cisco
+  plain-text-passwd: cisco
+  shell: /bin/bash
+  ssh-authorized-keys:
+  - VIRL-USER-SSH-PUBLIC-KEY
+  sudo: ALL=(ALL) ALL
+write_files:
+- path: /etc/systemd/system/dhclient@.service
+  content: |
+    [Unit]
+    Description=Run dhclient on %i interface
+    After=network.target
+    [Service]
+    Type=oneshot
+    ExecStart=/sbin/dhclient %i -pf /var/run/dhclient.%i.pid -lf /var/lib/dhclient/dhclient.%i.lease
+    RemainAfterExit=yes
+  owner: root:root
+  permissions: '0644'
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    ifconfig eth1 up 10.0.0.9 netmask 255.255.255.248
+    route add -net 10.0.0.0/16 gw 10.0.0.10 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.10 dev eth1
+    route add -net 10.0.0.0/16 gw 10.0.0.11 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.11 dev eth1
+    route add -net 10.0.0.0/16 gw 10.0.0.12 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.12 dev eth1
+    route add -net 10.0.0.0/16 gw 10.0.0.13 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.13 dev eth1
+    route add -net 10.0.0.0/16 gw 10.0.0.14 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.14 dev eth1
+    exit 0
+</entry>
+        </extensions>
+        <interface id="0" name="eth1" ipv4="10.0.0.9" netPrefixLenV4="29"/>
+    </node>
+    <node name="iosvl2-4" type="SIMPLE" subtype="IOSvL2" location="370,608">
+        <extensions>
+            <entry key="config" type="string">! IOSvL2 Config generated on 2017-03-03 10:16
+! by autonetkit_0.23.5
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+service compress-config
+no service config
+enable password cisco
+ip classless
+ip subnet-zero
+no ip domain lookup
+!
+line vty 0 4
+transport input ssh telnet
+exec-timeout 720 0
+password cisco
+login
+!
+line con 0
+password cisco
+!
+hostname iosvl2-4
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+vtp domain virl.lab
+vtp mode transparent
+!
+vlan 2
+  name ank_vlan2
+!
+!
+!
+!
+no cdp run
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+vrf definition Mgmt-intf
+!
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+!
+!
+!
+!
+interface Loopback0
+  description Loopback
+!
+interface GigabitEthernet0/0
+  description OOB management
+  ! Configured on launch
+  no switchport
+  vrf forwarding Mgmt-intf
+  no ip address
+  no shutdown
+!
+interface GigabitEthernet0/1
+  description to R41
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
+!
+interface GigabitEthernet0/2
+  description to ostinato4
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+end
+        </entry>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+        </extensions>
+        <interface id="0" name="GigabitEthernet0/1"/>
+        <interface id="1" name="GigabitEthernet0/2"/>
+    </node>
+    <node name="ostinato2" type="SIMPLE" subtype="lxc-ostinato-drone" location="539,173">
+        <extensions>
+            <entry key="config" type="string">#cloud-config
+bootcmd:
+- ln -s -t /etc/rc.d /etc/rc.local
+hostname: ostinato2
+manage_etc_hosts: true
+runcmd:
+- systemctl start rc-local
+- sed -i '/^\s*PasswordAuthentication\s\+no/d' /etc/ssh/sshd_config
+- echo "UseDNS no" &gt;&gt; /etc/ssh/sshd_config
+- service ssh restart
+- service sshd restart
+users:
+- default
+- gecos: User configured by VIRL Configuration Engine 0.23.9
+  lock-passwd: false
+  name: cisco
+  plain-text-passwd: cisco
+  shell: /bin/bash
+  ssh-authorized-keys:
+  - VIRL-USER-SSH-PUBLIC-KEY
+  sudo: ALL=(ALL) ALL
+write_files:
+- path: /etc/systemd/system/dhclient@.service
+  content: |
+    [Unit]
+    Description=Run dhclient on %i interface
+    After=network.target
+    [Service]
+    Type=oneshot
+    ExecStart=/sbin/dhclient %i -pf /var/run/dhclient.%i.pid -lf /var/lib/dhclient/dhclient.%i.lease
+    RemainAfterExit=yes
+  owner: root:root
+  permissions: '0644'
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    ifconfig eth1 up 10.0.0.18 netmask 255.255.255.248
+    route add -net 10.0.0.0/16 gw 10.0.0.17 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.17 dev eth1
+    route add -net 10.0.0.0/16 gw 10.0.0.19 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.19 dev eth1
+    route add -net 10.0.0.0/16 gw 10.0.0.20 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.20 dev eth1
+    route add -net 10.0.0.0/16 gw 10.0.0.21 dev eth1
+    route add -net 192.168.0.0/27 gw 10.0.0.21 dev eth1
+    exit 0
+</entry>
+        </extensions>
+        <interface id="0" name="eth1" ipv4="10.0.0.18" netPrefixLenV4="29"/>
+    </node>
     <annotations/>
-    <connection dst="/virl:topology/virl:node[5]/virl:interface[3]" src="/virl:topology/virl:node[7]/virl:interface[3]"/>
-    <connection dst="/virl:topology/virl:node[2]/virl:interface[1]" src="/virl:topology/virl:node[4]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[3]/virl:interface[1]" src="/virl:topology/virl:node[6]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[6]/virl:interface[2]" src="/virl:topology/virl:node[4]/virl:interface[2]"/>
-    <connection dst="/virl:topology/virl:node[2]/virl:interface[2]" src="/virl:topology/virl:node[8]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[9]/virl:interface[1]" src="/virl:topology/virl:node[3]/virl:interface[2]"/>
-    <connection dst="/virl:topology/virl:node[8]/virl:interface[2]" src="/virl:topology/virl:node[9]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[4]/virl:interface[3]" src="/virl:topology/virl:node[6]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[1]/virl:interface[1]" src="/virl:topology/virl:node[3]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[2]/virl:interface[1]" src="/virl:topology/virl:node[5]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[5]/virl:interface[2]" src="/virl:topology/virl:node[3]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[1]/virl:interface[2]" src="/virl:topology/virl:node[7]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[8]/virl:interface[1]" src="/virl:topology/virl:node[2]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[7]/virl:interface[2]" src="/virl:topology/virl:node[8]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[1]/virl:interface[5]" src="/virl:topology/virl:node[9]/virl:interface[1]"/>
     <connection dst="/virl:topology/virl:node[2]/virl:interface[5]" src="/virl:topology/virl:node[10]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[3]/virl:interface[5]" src="/virl:topology/virl:node[11]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[10]/virl:interface[2]" src="/virl:topology/virl:node[11]/virl:interface[2]"/>
-    <connection dst="/virl:topology/virl:node[13]/virl:interface[3]" src="/virl:topology/virl:node[1]/virl:interface[2]"/>
-    <connection dst="/virl:topology/virl:node[3]/virl:interface[3]" src="/virl:topology/virl:node[12]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[3]/virl:interface[4]" src="/virl:topology/virl:node[13]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[2]/virl:interface[4]" src="/virl:topology/virl:node[13]/virl:interface[2]"/>
-    <connection dst="/virl:topology/virl:node[16]/virl:interface[2]" src="/virl:topology/virl:node[5]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[16]/virl:interface[3]" src="/virl:topology/virl:node[4]/virl:interface[3]"/>
-    <connection dst="/virl:topology/virl:node[16]/virl:interface[4]" src="/virl:topology/virl:node[6]/virl:interface[3]"/>
-    <connection dst="/virl:topology/virl:node[17]/virl:interface[1]" src="/virl:topology/virl:node[8]/virl:interface[3]"/>
-    <connection dst="/virl:topology/virl:node[17]/virl:interface[2]" src="/virl:topology/virl:node[9]/virl:interface[3]"/>
-    <connection dst="/virl:topology/virl:node[7]/virl:interface[1]" src="/virl:topology/virl:node[17]/virl:interface[3]"/>
-    <connection dst="/virl:topology/virl:node[15]/virl:interface[1]" src="/virl:topology/virl:node[17]/virl:interface[4]"/>
-    <connection dst="/virl:topology/virl:node[16]/virl:interface[5]" src="/virl:topology/virl:node[12]/virl:interface[3]"/>
-    <connection dst="/virl:topology/virl:node[18]/virl:interface[1]" src="/virl:topology/virl:node[10]/virl:interface[3]"/>
-    <connection dst="/virl:topology/virl:node[18]/virl:interface[2]" src="/virl:topology/virl:node[11]/virl:interface[3]"/>
-    <connection dst="/virl:topology/virl:node[18]/virl:interface[3]" src="/virl:topology/virl:node[1]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[16]/virl:interface[1]" src="/virl:topology/virl:node[14]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[12]/virl:interface[2]" src="/virl:topology/virl:node[2]/virl:interface[3]"/>
-    <connection dst="/virl:topology/virl:node[19]/virl:interface[1]" src="/virl:topology/virl:node[5]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[9]/virl:interface[2]" src="/virl:topology/virl:node[10]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[2]/virl:interface[3]" src="/virl:topology/virl:node[11]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[2]/virl:interface[4]" src="/virl:topology/virl:node[12]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[1]/virl:interface[4]" src="/virl:topology/virl:node[12]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[15]/virl:interface[2]" src="/virl:topology/virl:node[4]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[15]/virl:interface[3]" src="/virl:topology/virl:node[3]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[15]/virl:interface[4]" src="/virl:topology/virl:node[5]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[16]/virl:interface[1]" src="/virl:topology/virl:node[7]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[16]/virl:interface[2]" src="/virl:topology/virl:node[8]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[6]/virl:interface[1]" src="/virl:topology/virl:node[16]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[14]/virl:interface[1]" src="/virl:topology/virl:node[16]/virl:interface[4]"/>
+    <connection dst="/virl:topology/virl:node[15]/virl:interface[5]" src="/virl:topology/virl:node[11]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[17]/virl:interface[1]" src="/virl:topology/virl:node[9]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[17]/virl:interface[2]" src="/virl:topology/virl:node[10]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[15]/virl:interface[1]" src="/virl:topology/virl:node[13]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[11]/virl:interface[2]" src="/virl:topology/virl:node[1]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[18]/virl:interface[1]" src="/virl:topology/virl:node[4]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[15]/virl:interface[6]" src="/virl:topology/virl:node[21]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[22]/virl:interface[1]" src="/virl:topology/virl:node[12]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[19]/virl:interface[1]" src="/virl:topology/virl:node[22]/virl:interface[2]"/>
+    <connection dst="/virl:topology/virl:node[20]/virl:interface[1]" src="/virl:topology/virl:node[17]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[16]/virl:interface[5]" src="/virl:topology/virl:node[23]/virl:interface[1]"/>
 </topology>
