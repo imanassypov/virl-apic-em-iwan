@@ -3,13 +3,12 @@
     <extensions>
         <entry key="AutoNetkit.ipv4_loopback_subnet" type="String">192.168.0.0</entry>
         <entry key="management_lxc" type="Boolean">true</entry>
-        <entry key="management_network" type="String">flat</entry>
+        <entry key="management_network" type="String">user</entry>
     </extensions>
     <node name="R1" type="SIMPLE" subtype="CSR1000v" location="580,664">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:61:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.54</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 09:25:05 EST Fri Feb 24 2017
 ! NVRAM config last updated at 09:25:05 EST Fri Feb 24 2017
@@ -60,9 +59,6 @@ clock timezone EST -5 0
 !
 !
 !
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
 !
@@ -297,6 +293,8 @@ ip sla 2301
  timeout 800
  frequency 1
 !
+ntp server 172.16.1.100
+!
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -313,6 +311,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  exec-timeout 0 0
@@ -324,7 +323,6 @@ line vty 1 4
  length 0
  transport input ssh
 !
-ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
 pnp profile apicem-pnp
@@ -340,7 +338,6 @@ end</entry>
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:31:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.71</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 09:25:05 EST Fri Feb 24 2017
 ! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
@@ -376,9 +373,6 @@ clock timezone EST -5 0
 !
 !
 !
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
 !
@@ -505,6 +499,9 @@ no ip http secure-server
 ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
+ip route 0.0.0.0 0.0.0.0 172.18.31.1
+!
+ntp server 172.16.1.100
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -522,6 +519,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  login local
@@ -534,8 +532,6 @@ line vty 2 4
  login local
  transport input ssh
 !
-ntp server 172.16.1.2
-ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
 pnp profile apicem-pnp
@@ -553,12 +549,11 @@ end</entry>
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:32:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.72</entry>
             <entry key="config" type="String">!
-! Last configuration change at 09:25:05 EST Fri Feb 24 2017
-! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
+! Last configuration change at 13:45:08 EST Thu Mar 2 2017
+! NVRAM config last updated at 13:45:09 EST Thu Mar 2 2017
 !
-version 15.6
+version 16.4
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -589,9 +584,6 @@ clock timezone EST -5 0
 !
 !
 !
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
 !
@@ -628,6 +620,23 @@ multilink bundle-name authenticated
 !
 !
 !
+crypto pki trustpoint TP-self-signed-1259618889
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-1259618889
+ revocation-check none
+ rsakeypair TP-self-signed-1259618889
+!
+crypto pki trustpoint pnplabel
+ enrollment pkcs12
+ revocation-check none
+!
+!
+crypto pki certificate chain TP-self-signed-1259618889
+ certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
+crypto pki certificate chain pnplabel
+ certificate ca 009053557086724565973405274167029006333C nvram:Cisco#333CCA.cer
+
+
 !
 !
 !
@@ -635,12 +644,13 @@ multilink bundle-name authenticated
 !
 !
 !
-!
-license udi pid CSR1000V sn 901NI8HMWBG
+license udi pid CSR1000V sn 9L8AMLG2MT0
 license accept end user agreement
 license boot level ax
+diagnostic bootup level minimal
 !
 spanning-tree extend system-id
+!
 !
 username cisco privilege 15 secret 5 $1$6Th5$VWVPr9h/e8bfMx.gv5w0V1
 !
@@ -725,13 +735,18 @@ interface GigabitEthernet6
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
-!
 no ip http server
 ip http authentication local
 no ip http secure-server
+!
 ip tftp source-interface GigabitEthernet1
+ip route 0.0.0.0 0.0.0.0 100.64.31.1
 ip ssh version 2
 !
+!
+!
+!
+ntp server 172.16.1.100
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -749,6 +764,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  login local
@@ -758,12 +774,14 @@ line vty 1 4
  length 0
  transport input ssh
 !
-ntp server vrf Mgmt-intf 172.16.1.2
+!
+!
+!
+!
 !
 !
 pnp profile apicem-pnp
- transport http ipv4 172.16.1.100 port 80
- reconnect 1
+ transport https ipv4 100.64.31.100 port 443
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -776,7 +794,6 @@ end</entry>
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:11:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.11</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 09:25:05 EST Fri Feb 24 2017
 ! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
@@ -812,9 +829,6 @@ clock timezone EST -5 0
 !
 !
 !
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
 !
@@ -939,6 +953,8 @@ ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
+ntp server 172.16.1.100
+!
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -955,6 +971,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  exec-timeout 0 0
@@ -970,7 +987,6 @@ line vty 2 4
  login local
  transport input ssh
 !
-ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
 pnp profile apicem-pnp
@@ -986,12 +1002,11 @@ end</entry>
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:01:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.13</entry>
             <entry key="config" type="String">!
-! Last configuration change at 09:25:05 EST Fri Feb 24 2017
-! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
+! Last configuration change at 16:50:25 EST Thu Mar 2 2017
+! NVRAM config last updated at 16:50:26 EST Thu Mar 2 2017
 !
-version 15.6
+version 16.4
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -1014,28 +1029,8 @@ enable secret 5 $1$d94K$tZo2NrKoOh4YjTzGDEipb.
 no aaa new-model
 clock timezone EST -5 0
 !
-!
-!
-!
-!
-!
-!
-!
-!
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
-!
-!
-!
-!
-!
-!
-!
-!
-!
 !
 subscriber templating
 !
@@ -1043,23 +1038,13 @@ subscriber templating
 !
 multilink bundle-name authenticated
 !
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-license udi pid CSR1000V sn 91SC6FCZ943
+license udi pid CSR1000V sn 9RHP8BDMA0E
 license accept end user agreement
 license boot level ax
+diagnostic bootup level minimal
 !
 spanning-tree extend system-id
+!
 !
 username cisco privilege 15 secret 5 $1$UWD/$.pid6tkjP1VTiDLX6mHbz0
 !
@@ -1071,33 +1056,14 @@ redundancy
 !
 cdp run
 !
-! 
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-! 
-! 
-! 
-! 
-! 
-! 
-!
-!
+
 interface Loopback0
  ip address 10.1.0.100 255.255.255.255
 !
 interface GigabitEthernet1
  description OOB Management
- ip address 172.16.1.13 255.255.255.0
+ vrf forwarding Mgmt-intf
+ ip address 10.255.0.9 255.255.0.0
  negotiation auto
  no mop enabled
  no mop sysid
@@ -1112,10 +1078,9 @@ interface GigabitEthernet2
  no mop sysid
 !
 interface GigabitEthernet3
- description R12
- no ip address
+ description Outside-to-Flat1
+ ip address 172.16.1.13 255.255.255.0
  load-interval 30
- shutdown
  negotiation auto
  cdp enable
  no mop enabled
@@ -1150,20 +1115,23 @@ router ospf 1
  network 10.1.0.100 0.0.0.0 area 0
  network 10.1.110.1 0.0.0.0 area 0
  network 10.10.20.100 0.0.0.0 area 0
- network 172.16.1.13 0.0.0.0 area 0
+ network 172.16.0.0 0.0.255.255 area 0
 !
 !
 virtual-service csr_mgmt
 !
 ip forward-protocol nd
-!
 no ip http server
 ip http authentication local
 no ip http secure-server
+!
 ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
+!
+!
+ntp server 172.16.1.100
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -1180,6 +1148,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  exec-timeout 0 0
@@ -1195,14 +1164,14 @@ line vty 2 4
  login local
  transport input ssh
 !
-ntp server 172.16.1.2
-ntp server vrf Mgmt-intf 172.16.1.2
-ntp server 172.16.1.100
+!
+!
+!
+!
 !
 !
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
- reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -1210,11 +1179,10 @@ end</entry>
         <interface id="2" name="GigabitEthernet4"/>
         <interface id="3" name="GigabitEthernet5"/>
     </node>
-    <node name="R12" type="SIMPLE" subtype="CSR1000v" location="452,315">
+    <node name="R12" type="SIMPLE" subtype="CSR1000v" location="431,315">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:12:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.12</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 09:25:05 EST Fri Feb 24 2017
 ! NVRAM config last updated at 09:25:05 EST Fri Feb 24 2017
@@ -1250,9 +1218,6 @@ clock timezone EST -5 0
 !
 !
 !
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
 !
@@ -1378,6 +1343,8 @@ ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
+ntp server 172.16.1.100
+!
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -1394,6 +1361,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  exec-timeout 0 0
@@ -1409,7 +1377,6 @@ line vty 2 4
  login local
  transport input ssh
 !
-ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
 pnp profile apicem-pnp
@@ -1425,7 +1392,6 @@ end</entry>
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:02:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.23</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 09:25:05 EST Fri Feb 24 2017
 ! NVRAM config last updated at 09:25:05 EST Fri Feb 24 2017
@@ -1461,9 +1427,6 @@ clock timezone EST -5 0
 !
 !
 !
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
 !
@@ -1486,37 +1449,6 @@ multilink bundle-name authenticated
 !
 !
 !
-key chain LAN-KEY
- key 1
-   key-string cisco123
-!
-crypto pki trustpoint TP-self-signed-3397479727
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-3397479727
- revocation-check none
- rsakeypair TP-self-signed-3397479727
-!
-crypto pki trustpoint TP-self-signed-1112054880
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-1112054880
- revocation-check none
- rsakeypair TP-self-signed-1112054880
-!
-crypto pki trustpoint sdn-network-infra-iwan
- enrollment url http://172.16.1.100:80/ejbca/publicweb/apply/scep/sdnscep
- fqdn core2
- subject-name CN=CSR1000V_9FJYBUL4P3R_sdn-network-infra-iwan
- revocation-check crl
- rsakeypair sdn-network-infra-iwan
- auto-enroll 80 regenerate
-!
-!
-crypto pki certificate chain TP-self-signed-3397479727
- certificate self-signed 01 nvram:IOS-Self-Sig#1.cer
-crypto pki certificate chain TP-self-signed-1112054880
-crypto pki certificate chain sdn-network-infra-iwan
- certificate ca 21383503081B9DAA nvram:sdn-network-#9DAACA.cer
- certificate 2FB8EF1D80EA5AC5 nvram:sdn-network-#5AC5.cer
 !
 !
 !
@@ -1644,6 +1576,7 @@ ip ssh version 2
 ip sla responder
 ip sla responder tcp-connect ipaddress 10.10.100.20 port 7000
 !
+ntp server 172.16.1.100
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -1660,6 +1593,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  login local
@@ -1672,9 +1606,6 @@ line vty 2 4
  login local
  transport input ssh
 !
-ntp server 172.16.1.2
-ntp server vrf Mgmt-intf 172.16.1.2
-ntp server 172.16.1.100
 !
 !
 pnp profile apicem-pnp
@@ -1688,11 +1619,10 @@ end</entry>
         <interface id="3" name="GigabitEthernet5"/>
         <interface id="4" name="GigabitEthernet6"/>
     </node>
-    <node name="R21" type="SIMPLE" subtype="CSR1000v" location="572,319">
+    <node name="R21" type="SIMPLE" subtype="CSR1000v" location="593,315">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:21:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.21</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 09:25:05 EST Fri Feb 24 2017
 ! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
@@ -1752,15 +1682,6 @@ multilink bundle-name authenticated
 !
 !
 !
-!
-crypto pki trustpoint TP-self-signed-2066765782
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-2066765782
- revocation-check none
- rsakeypair TP-self-signed-2066765782
-!
-!
-crypto pki certificate chain TP-self-signed-2066765782
 !
 !
 !
@@ -1863,6 +1784,8 @@ ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
+ntp server 172.16.1.100
+!
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -1879,6 +1802,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  login local
@@ -1891,7 +1815,6 @@ line vty 2 4
  login local
  transport input ssh
 !
-ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
 pnp profile apicem-pnp
@@ -1903,11 +1826,10 @@ end</entry>
         <interface id="1" name="GigabitEthernet3"/>
         <interface id="2" name="GigabitEthernet4"/>
     </node>
-    <node name="R22" type="SIMPLE" subtype="CSR1000v" location="730,318">
+    <node name="R22" type="SIMPLE" subtype="CSR1000v" location="736,318">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:22:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.22</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 09:25:05 EST Fri Feb 24 2017
 ! NVRAM config last updated at 09:25:06 EST Fri Feb 24 2017
@@ -1943,9 +1865,6 @@ clock timezone EST -5 0
 !
 !
 !
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
 !
@@ -2071,6 +1990,8 @@ ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
+ntp server 172.16.1.100
+!
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -2087,6 +2008,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  exec-timeout 0 0
@@ -2098,7 +2020,6 @@ line vty 1 4
  length 0
  transport input ssh
 !
-ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
 pnp profile apicem-pnp
@@ -2110,11 +2031,10 @@ end</entry>
         <interface id="1" name="GigabitEthernet3"/>
         <interface id="2" name="GigabitEthernet4"/>
     </node>
-    <node name="R51" type="SIMPLE" subtype="CSR1000v" location="616,536">
+    <node name="R51" type="SIMPLE" subtype="CSR1000v" location="616,536" excludeFromLaunch="true">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:51:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.51</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 14:25:07 UTC Fri Feb 24 2017
 !
@@ -2146,9 +2066,7 @@ no aaa new-model
 !
 !
 !
-
-
-
+no ip domain lookup
 ip domain name rbclab.local
 !
 !
@@ -2242,8 +2160,10 @@ no ip http server
 no ip http secure-server
 ip tftp source-interface GigabitEthernet1
 !
+ntp server 172.16.1.100
 !
-!
+snmp-server community public RO
+snmp-server community private RW
 !
 control-plane
 !
@@ -2257,12 +2177,12 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0 4
  exec-timeout 0 0
  login
 !
-ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
 pnp profile apicem-pnp
@@ -2274,11 +2194,10 @@ end</entry>
         <interface id="1" name="GigabitEthernet3"/>
         <interface id="2" name="GigabitEthernet4"/>
     </node>
-    <node name="R52" type="SIMPLE" subtype="CSR1000v" location="703,538">
+    <node name="R52" type="SIMPLE" subtype="CSR1000v" location="703,538" excludeFromLaunch="true">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:52:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.52</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 14:12:23 UTC Fri Feb 24 2017
 !
@@ -2305,9 +2224,7 @@ no aaa new-model
 !
 !
 !
-
-
-
+no ip domain lookup
 ip domain name rbclab.local
 !
 !
@@ -2399,19 +2316,16 @@ no ip http secure-server
 !
 !
 !
+ntp server 172.16.1.100
+!
+snmp-server community public RO
+snmp-server community private RW
 !
 control-plane
 !
- !
- !
- !
- !
-!
-!
-!
-!
-!
+
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  exec-timeout 0 0
@@ -2435,16 +2349,15 @@ end</entry>
         <interface id="1" name="GigabitEthernet3"/>
         <interface id="2" name="GigabitEthernet4"/>
     </node>
-    <node name="PNP-RTR" type="SIMPLE" subtype="CSR1000v" location="512,259">
+    <node name="INET-ACCESS" type="SIMPLE" subtype="CSR1000v" location="518,314">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:33:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.14</entry>
             <entry key="config" type="String">!
-! Last configuration change at 09:12:03 EST Fri Feb 24 2017
-! NVRAM config last updated at 09:25:07 EST Fri Feb 24 2017 by cisco
+! Last configuration change at 13:35:33 EST Thu Mar 2 2017
+! NVRAM config last updated at 13:35:52 EST Thu Mar 2 2017 by cisco
 !
-version 15.6
+version 16.4
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
 no platform punt-keepalive disable-kernel-core
@@ -2475,9 +2388,6 @@ clock timezone EST -5 0
 !
 !
 !
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
 !
@@ -2506,13 +2416,13 @@ multilink bundle-name authenticated
 !
 !
 !
-!
-!
-license udi pid CSR1000V sn 9NMLF68LZBX
+license udi pid CSR1000V sn 9K8K57PE5Q2
 license accept end user agreement
 license boot level ax
+diagnostic bootup level minimal
 !
 spanning-tree extend system-id
+!
 !
 username cisco privilege 15 secret 5 $1$p/ds$SZJcepfb0TWgYb5OBVceB/
 !
@@ -2566,7 +2476,6 @@ interface GigabitEthernet2
 !
 interface GigabitEthernet3
  ip address 172.18.31.1 255.255.255.0
- ip nat outside
  negotiation auto
  cdp enable
  no mop enabled
@@ -2594,17 +2503,25 @@ virtual-service csr_mgmt
 ip nat inside source static 172.16.1.100 100.64.31.100 extendable
 ip nat inside source static 172.16.1.100 172.18.31.100 extendable
 ip nat inside source list 1 interface GigabitEthernet3 overload extended
+ip nat inside source list NATOUT interface GigabitEthernet3 overload
 ip forward-protocol nd
-!
 no ip http server
 ip http authentication local
 no ip http secure-server
+!
 ip tftp source-interface GigabitEthernet1
 ip route 100.64.0.0 255.255.0.0 100.64.31.2
 ip route 172.18.0.0 255.255.0.0 172.18.31.2
 ip ssh version 2
 !
-access-list 1 permit any
+ip access-list standard NATOUT
+ permit 172.16.0.0 0.0.255.255
+ permit 10.0.0.0 0.255.255.255
+!
+!
+!
+!
+ntp server 172.16.1.100
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -2634,12 +2551,14 @@ line vty 2 4
  login local
  transport input telnet ssh
 !
-ntp server vrf Mgmt-intf 172.16.1.2
+!
+!
+!
+!
 !
 !
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
- reconnect 1
 end</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
@@ -2650,7 +2569,6 @@ end</entry>
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:41:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.41</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 09:25:09 EST Fri Feb 24 2017
 ! NVRAM config last updated at 09:25:09 EST Fri Feb 24 2017
@@ -2686,9 +2604,6 @@ clock timezone EST -5 0
 !
 !
 !
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
 !
@@ -2796,9 +2711,10 @@ ip tftp source-interface GigabitEthernet1
 ip ssh version 2
 !
 !
+ntp server 172.16.1.100
+!
 snmp-server community public RO
 snmp-server community private RW
-snmp-server chassis-id 9QLCEYNDAVO
 !
 !
 control-plane
@@ -2813,6 +2729,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  exec-timeout 0 0
@@ -2824,11 +2741,10 @@ line vty 1 4
  length 0
  transport input ssh
 !
-ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
 pnp profile apicem-pnp
- transport http ipv4 172.16.1.100 port 80
+ transport http ipv4 100.64.31.100 port 80
  reconnect 1
 end</entry>
         </extensions>
@@ -2836,11 +2752,10 @@ end</entry>
         <interface id="1" name="GigabitEthernet3"/>
         <interface id="2" name="GigabitEthernet4"/>
     </node>
-    <node name="R10" type="SIMPLE" subtype="CSR1000v" location="215,164" vmImage="guest-CSR1000v-R10 [4c99ce89-84ed-4cf5-9124-a18fe9651156]">
+    <node name="R10" type="SIMPLE" subtype="CSR1000v" location="215,164">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:10:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.10</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 09:25:09 EST Fri Feb 24 2017
 ! NVRAM config last updated at 09:25:10 EST Fri Feb 24 2017
@@ -2876,9 +2791,6 @@ clock timezone EST -5 0
 !
 !
 !
-
-
-
 no ip domain lookup
 ip domain name rbclab.local
 !
@@ -2908,10 +2820,6 @@ multilink bundle-name authenticated
 !
 !
 !
-!
-license udi pid CSR1000V sn 9GEQHBGXMK7
-license accept end user agreement
-license boot level ax
 !
 spanning-tree extend system-id
 !
@@ -2976,8 +2884,12 @@ ip http authentication local
 no ip http secure-server
 ip tftp source-interface GigabitEthernet1
 ip route 0.0.0.0 0.0.0.0 10.1.110.1
+ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 172.16.1.13
+!
 ip ssh version 2
 !
+!
+ntp server 172.16.1.100
 !
 snmp-server community public RO
 snmp-server community private RW
@@ -2995,6 +2907,7 @@ control-plane
 !
 !
 line con 0
+ exec-timeout 0 0
  stopbits 1
 line vty 0
  exec-timeout 0 0
@@ -3006,7 +2919,6 @@ line vty 1 4
  length 0
  transport input ssh
 !
-ntp server vrf Mgmt-intf 172.16.1.2
 !
 !
 pnp profile apicem-pnp
@@ -3024,7 +2936,6 @@ end</entry>
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:20:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">172.16.1.20</entry>
             <entry key="config" type="String">!
 ! Last configuration change at 09:25:09 EST Fri Feb 24 2017
 ! NVRAM config last updated at 09:25:09 EST Fri Feb 24 2017
@@ -3163,6 +3074,8 @@ ip route 0.0.0.0 0.0.0.0 10.2.220.1
 ip ssh version 2
 !
 !
+ntp server 172.16.1.100
+!
 snmp-server community public RO
 snmp-server community private RW
 !
@@ -3202,16 +3115,30 @@ end</entry>
     </node>
     <node name="iosvl2-1" type="SIMPLE" subtype="IOSvL2" location="356,218">
         <extensions>
-            <entry key="config" type="String">!
-! Last configuration change at 14:24:17 UTC Fri Feb 24 2017
+            <entry key="config" type="String">! IOSvL2 Config generated on 2017-03-02 16:06
+! by autonetkit_0.23.5
 !
 version 15.2
 service timestamps debug datetime msec
 service timestamps log datetime msec
 no service password-encryption
 service compress-config
+no service config
+enable password cisco
+ip classless
+ip subnet-zero
+no ip domain lookup
 !
-hostname Switch
+line vty 0 4
+transport input ssh telnet
+exec-timeout 720 0
+password cisco
+login
+!
+line con 0
+password cisco
+!
+hostname iosvl2-1
 !
 boot-start-marker
 boot-end-marker
@@ -3220,10 +3147,16 @@ boot-end-marker
 !
 no aaa new-model
 !
+vtp domain virl.lab
+vtp mode transparent
+!
+vlan 2
+  name ank_vlan2
 !
 !
 !
 !
+no cdp run
 !
 !
 !
@@ -3231,58 +3164,71 @@ ip cef
 no ipv6 cef
 !
 !
-!
-spanning-tree mode rapid-pvst
+spanning-tree mode pvst
 spanning-tree extend system-id
 !
 vlan internal allocation policy ascending
 !
-! 
+!
+!
+!
+vrf definition Mgmt-intf
+!
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
 !
 !
 !
 !
 !
-!
-!
-!
-!
-!
-!
+interface Loopback0
+  description Loopback
 !
 interface GigabitEthernet0/0
- media-type rj45
- negotiation auto
+  description OOB management
+  ! Configured on launch
+  no switchport
+  vrf forwarding Mgmt-intf
+  no ip address
+  no shutdown
 !
 interface GigabitEthernet0/1
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to R10
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
 !
 interface GigabitEthernet0/2
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to Core1
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
 !
 interface GigabitEthernet0/3
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to R11
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
 !
 interface GigabitEthernet1/0
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to R12
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
 !
 interface GigabitEthernet1/1
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to INET-ACCESS
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
+!
+interface GigabitEthernet1/2
+  description GigabitEthernet1/2
+  no shutdown
+!
 !
 ip forward-protocol nd
 !
@@ -3296,41 +3242,11 @@ no ip http secure-server
 !
 control-plane
 !
-banner exec `
-**************************************************************************
-* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
-* education. IOSv is provided as-is and is not supported by Cisco's      *
-* Technical Advisory Center. Any use or disclosure, in whole or in part, *
-* of the IOSv Software or Documentation to any third party for any       *
-* purposes is expressly prohibited except as otherwise authorized by     *
-* Cisco in writing.                                                      *
-**************************************************************************`
-banner incoming `
-**************************************************************************
-* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
-* education. IOSv is provided as-is and is not supported by Cisco's      *
-* Technical Advisory Center. Any use or disclosure, in whole or in part, *
-* of the IOSv Software or Documentation to any third party for any       *
-* purposes is expressly prohibited except as otherwise authorized by     *
-* Cisco in writing.                                                      *
-**************************************************************************`
-banner login `
-**************************************************************************
-* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
-* education. IOSv is provided as-is and is not supported by Cisco's      *
-* Technical Advisory Center. Any use or disclosure, in whole or in part, *
-* of the IOSv Software or Documentation to any third party for any       *
-* purposes is expressly prohibited except as otherwise authorized by     *
-* Cisco in writing.                                                      *
-**************************************************************************`
-!
-line con 0
-line aux 0
-line vty 0 4
- login
 !
 !
-end</entry>
+end
+        </entry>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
         </extensions>
         <interface id="0" name="GigabitEthernet0/1"/>
         <interface id="1" name="GigabitEthernet0/2"/>
@@ -3341,16 +3257,30 @@ end</entry>
     </node>
     <node name="iosvl2-2" type="SIMPLE" subtype="IOSvL2" location="662,221">
         <extensions>
-            <entry key="config" type="String">!
-! Last configuration change at 14:23:30 UTC Fri Feb 24 2017
+            <entry key="config" type="String">! IOSvL2 Config generated on 2017-03-02 16:06
+! by autonetkit_0.23.5
 !
 version 15.2
 service timestamps debug datetime msec
 service timestamps log datetime msec
 no service password-encryption
 service compress-config
+no service config
+enable password cisco
+ip classless
+ip subnet-zero
+no ip domain lookup
 !
-hostname Switch
+line vty 0 4
+transport input ssh telnet
+exec-timeout 720 0
+password cisco
+login
+!
+line con 0
+password cisco
+!
+hostname iosvl2-2
 !
 boot-start-marker
 boot-end-marker
@@ -3359,10 +3289,16 @@ boot-end-marker
 !
 no aaa new-model
 !
+vtp domain virl.lab
+vtp mode transparent
+!
+vlan 2
+  name ank_vlan2
 !
 !
 !
 !
+no cdp run
 !
 !
 !
@@ -3370,52 +3306,61 @@ ip cef
 no ipv6 cef
 !
 !
-!
-spanning-tree mode rapid-pvst
+spanning-tree mode pvst
 spanning-tree extend system-id
 !
 vlan internal allocation policy ascending
 !
-! 
+!
+!
+!
+vrf definition Mgmt-intf
+!
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
 !
 !
 !
 !
 !
-!
-!
-!
-!
-!
-!
+interface Loopback0
+  description Loopback
 !
 interface GigabitEthernet0/0
- media-type rj45
- negotiation auto
+  description OOB management
+  ! Configured on launch
+  no switchport
+  vrf forwarding Mgmt-intf
+  no ip address
+  no shutdown
 !
 interface GigabitEthernet0/1
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to R21
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
 !
 interface GigabitEthernet0/2
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to R22
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
 !
 interface GigabitEthernet0/3
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to Core2
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
 !
 interface GigabitEthernet1/0
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to R20
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
+!
 !
 ip forward-protocol nd
 !
@@ -3429,59 +3374,43 @@ no ip http secure-server
 !
 control-plane
 !
-banner exec `
-**************************************************************************
-* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
-* education. IOSv is provided as-is and is not supported by Cisco's      *
-* Technical Advisory Center. Any use or disclosure, in whole or in part, *
-* of the IOSv Software or Documentation to any third party for any       *
-* purposes is expressly prohibited except as otherwise authorized by     *
-* Cisco in writing.                                                      *
-**************************************************************************`
-banner incoming `
-**************************************************************************
-* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
-* education. IOSv is provided as-is and is not supported by Cisco's      *
-* Technical Advisory Center. Any use or disclosure, in whole or in part, *
-* of the IOSv Software or Documentation to any third party for any       *
-* purposes is expressly prohibited except as otherwise authorized by     *
-* Cisco in writing.                                                      *
-**************************************************************************`
-banner login `
-**************************************************************************
-* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
-* education. IOSv is provided as-is and is not supported by Cisco's      *
-* Technical Advisory Center. Any use or disclosure, in whole or in part, *
-* of the IOSv Software or Documentation to any third party for any       *
-* purposes is expressly prohibited except as otherwise authorized by     *
-* Cisco in writing.                                                      *
-**************************************************************************`
-!
-line con 0
-line aux 0
-line vty 0 4
- login
 !
 !
-end</entry>
+end
+        </entry>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
         </extensions>
         <interface id="0" name="GigabitEthernet0/1"/>
         <interface id="1" name="GigabitEthernet0/2"/>
         <interface id="2" name="GigabitEthernet0/3"/>
         <interface id="3" name="GigabitEthernet1/0"/>
     </node>
-    <node name="iosvl2-3" type="SIMPLE" subtype="IOSvL2" location="653,603">
+    <node name="iosvl2-3" type="SIMPLE" subtype="IOSvL2" location="653,603" excludeFromLaunch="true">
         <extensions>
-            <entry key="config" type="String">!
-! Last configuration change at 14:24:39 UTC Fri Feb 24 2017
+            <entry key="config" type="String">! IOSvL2 Config generated on 2017-03-02 16:06
+! by autonetkit_0.23.5
 !
 version 15.2
 service timestamps debug datetime msec
 service timestamps log datetime msec
 no service password-encryption
 service compress-config
+no service config
+enable password cisco
+ip classless
+ip subnet-zero
+no ip domain lookup
 !
-hostname Switch
+line vty 0 4
+transport input ssh telnet
+exec-timeout 720 0
+password cisco
+login
+!
+line con 0
+password cisco
+!
+hostname iosvl2-3
 !
 boot-start-marker
 boot-end-marker
@@ -3490,10 +3419,16 @@ boot-end-marker
 !
 no aaa new-model
 !
+vtp domain virl.lab
+vtp mode transparent
+!
+vlan 2
+  name ank_vlan2
 !
 !
 !
 !
+no cdp run
 !
 !
 !
@@ -3501,46 +3436,55 @@ ip cef
 no ipv6 cef
 !
 !
-!
-spanning-tree mode rapid-pvst
+spanning-tree mode pvst
 spanning-tree extend system-id
 !
 vlan internal allocation policy ascending
 !
-! 
+!
+!
+!
+vrf definition Mgmt-intf
+!
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
 !
 !
 !
 !
 !
-!
-!
-!
-!
-!
-!
+interface Loopback0
+  description Loopback
 !
 interface GigabitEthernet0/0
- media-type rj45
- negotiation auto
+  description OOB management
+  ! Configured on launch
+  no switchport
+  vrf forwarding Mgmt-intf
+  no ip address
+  no shutdown
 !
 interface GigabitEthernet0/1
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to R51
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
 !
 interface GigabitEthernet0/2
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to R52
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
 !
 interface GigabitEthernet0/3
- media-type rj45
- speed 1000
- duplex full
- no negotiation auto
+  description to R1
+  switchport access vlan 2
+  switchport mode access
+  no shutdown
+!
 !
 ip forward-protocol nd
 !
@@ -3554,45 +3498,21 @@ no ip http secure-server
 !
 control-plane
 !
-banner exec `
-**************************************************************************
-* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
-* education. IOSv is provided as-is and is not supported by Cisco's      *
-* Technical Advisory Center. Any use or disclosure, in whole or in part, *
-* of the IOSv Software or Documentation to any third party for any       *
-* purposes is expressly prohibited except as otherwise authorized by     *
-* Cisco in writing.                                                      *
-**************************************************************************`
-banner incoming `
-**************************************************************************
-* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
-* education. IOSv is provided as-is and is not supported by Cisco's      *
-* Technical Advisory Center. Any use or disclosure, in whole or in part, *
-* of the IOSv Software or Documentation to any third party for any       *
-* purposes is expressly prohibited except as otherwise authorized by     *
-* Cisco in writing.                                                      *
-**************************************************************************`
-banner login `
-**************************************************************************
-* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
-* education. IOSv is provided as-is and is not supported by Cisco's      *
-* Technical Advisory Center. Any use or disclosure, in whole or in part, *
-* of the IOSv Software or Documentation to any third party for any       *
-* purposes is expressly prohibited except as otherwise authorized by     *
-* Cisco in writing.                                                      *
-**************************************************************************`
-!
-line con 0
-line aux 0
-line vty 0 4
- login
 !
 !
-end</entry>
+end
+        </entry>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
         </extensions>
         <interface id="0" name="GigabitEthernet0/1"/>
         <interface id="1" name="GigabitEthernet0/2"/>
         <interface id="2" name="GigabitEthernet0/3"/>
+    </node>
+    <node name="flat-1" type="ASSET" subtype="FLAT" location="512,45">
+        <extensions>
+            <entry key="host_network" type="String">flat</entry>
+        </extensions>
+        <interface id="0" name="link0"/>
     </node>
     <annotations/>
     <connection dst="/virl:topology/virl:node[5]/virl:interface[3]" src="/virl:topology/virl:node[7]/virl:interface[3]"/>
@@ -3607,7 +3527,6 @@ end</entry>
     <connection dst="/virl:topology/virl:node[10]/virl:interface[2]" src="/virl:topology/virl:node[11]/virl:interface[2]"/>
     <connection dst="/virl:topology/virl:node[13]/virl:interface[3]" src="/virl:topology/virl:node[1]/virl:interface[2]"/>
     <connection dst="/virl:topology/virl:node[3]/virl:interface[3]" src="/virl:topology/virl:node[12]/virl:interface[1]"/>
-    <connection dst="/virl:topology/virl:node[2]/virl:interface[3]" src="/virl:topology/virl:node[12]/virl:interface[2]"/>
     <connection dst="/virl:topology/virl:node[3]/virl:interface[4]" src="/virl:topology/virl:node[13]/virl:interface[1]"/>
     <connection dst="/virl:topology/virl:node[2]/virl:interface[4]" src="/virl:topology/virl:node[13]/virl:interface[2]"/>
     <connection dst="/virl:topology/virl:node[16]/virl:interface[2]" src="/virl:topology/virl:node[5]/virl:interface[1]"/>
@@ -3622,4 +3541,6 @@ end</entry>
     <connection dst="/virl:topology/virl:node[18]/virl:interface[2]" src="/virl:topology/virl:node[11]/virl:interface[3]"/>
     <connection dst="/virl:topology/virl:node[18]/virl:interface[3]" src="/virl:topology/virl:node[1]/virl:interface[1]"/>
     <connection dst="/virl:topology/virl:node[16]/virl:interface[1]" src="/virl:topology/virl:node[14]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[12]/virl:interface[2]" src="/virl:topology/virl:node[2]/virl:interface[3]"/>
+    <connection dst="/virl:topology/virl:node[19]/virl:interface[1]" src="/virl:topology/virl:node[5]/virl:interface[2]"/>
 </topology>
