@@ -11,6 +11,10 @@ Scope of APIC-EM automated iWAN deployment in this project:
 	- Single Router, dual-transport (title: R41)
 	- Dual Router, dual-transport (title: R51 branch)
 
+## Project Topology
+
+[Project Topology](virl_iwan_topo.png)
+
 ## Prerequisites
 
 What things you need to install the software and how to install them
