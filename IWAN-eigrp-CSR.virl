@@ -610,16 +610,7 @@ control-plane
 line con 0
  exec-timeout 0 0
  stopbits 1
-line vty 0
- exec-timeout 0 0
- login local
- transport input ssh
-line vty 1
- exec-timeout 0 0
- login local
- length 0
- transport input ssh
-line vty 2 4
+line vty 0 16
  exec-timeout 0 0
  login local
  transport input ssh
@@ -1055,12 +1046,7 @@ line vty 0 4
 line vty 5 16
  exec-timeout 0 0
  login local
- length 0
- transport input ssh
-line vty 2 4
- exec-timeout 0 0
- login local
- transport input ssh
+transport input ssh
 !
 !
 !
@@ -1742,14 +1728,9 @@ control-plane
 line con 0
  exec-timeout 0 0
  stopbits 1
-line vty 0
+line vty 0 16
  exec-timeout 0 0
  login local
- transport input ssh
-line vty 1 4
- exec-timeout 0 0
- login local
- length 0
  transport input ssh
 !
 !
@@ -1936,6 +1917,9 @@ ip route 0.0.0.0 0.0.0.0 172.18.51.2
 snmp-server community public RO
 snmp-server community private RW
 !
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
+!
 control-plane
 !
 !
@@ -2036,7 +2020,7 @@ interface GigabitEthernet3
 !
 interface GigabitEthernet4
  no ip address
- shutdown
+ no shutdown
  negotiation auto
 !
 interface GigabitEthernet4.10
@@ -2074,6 +2058,9 @@ ntp server 172.16.1.2
 !
 snmp-server community public RO
 snmp-server community private RW
+!
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 control-plane
 !
@@ -2590,7 +2577,7 @@ snmp-server community public RO
 snmp-server community private RW
 !
 snmp-server group authPriv v3 priv
-snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 129 Torlab123
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 !
 control-plane
@@ -2607,11 +2594,7 @@ control-plane
 line con 0
  exec-timeout 0 0
  stopbits 1
-line vty 0
- exec-timeout 0 0
- login local
- transport input ssh
-line vty 5 16
+line vty 0 16
  exec-timeout 0 0
  login local
  transport input ssh
@@ -3402,7 +3385,9 @@ ip sla responder
 !
 snmp-server community public RO
 snmp-server community private RW
-snmp ifmib ifindex persist
+!
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 !
 control-plane

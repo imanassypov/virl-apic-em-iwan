@@ -120,6 +120,14 @@ write erase
 reload
 !-----------------
 
+!-----------------
+! Each hub router needs to have a min of 16 VTY lines configured
+line vty 0 16
+ login local
+ transport input ssh
+!
+!-----------------
+
 ```
 
 ```
@@ -130,6 +138,21 @@ iWAN App provisioning process:
 -- Static/DHCP default route
 -- SSH service
 -- SNMPv2 / SNMPv3 configuration
+
+!-----------------
+! note that user credentials for snmpv3 are not shown in shrun
+! verify creation of snmp v3 user:
+!sh snmp user admin
+!User name: admin
+!Engine ID: 800000090300FA1600001100
+!storage-type: nonvolatile        active
+!Authentication Protocol: SHA
+!Privacy Protocol: AES128
+!Group-name: authPriv
+!
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
+!-----------------
 
 For Branch deployments, it is highly recommended to implement SNMPv3 AuthPriv configuration (Authentication and Encryption), as SNMP protocol will be used across Internet for Initial Device Discovery from APIC-EM.
 
