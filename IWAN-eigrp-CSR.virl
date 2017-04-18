@@ -16,6 +16,7 @@
 version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -25,6 +26,19 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.04b.S.155-3.S4b-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
+!
+license accept end user agreement
+license smart enable
+platform hardware throughput level MB 1000
 !
 vrf definition Mgmt-intf
  !
@@ -207,7 +221,19 @@ ntp server 172.16.1.2
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
  reconnect 1
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
@@ -226,6 +252,7 @@ end</entry>
 version 16.4
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -235,6 +262,19 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.04b.S.155-3.S4b-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
+!
+license accept end user agreement
+license smart enable
+platform hardware throughput level MB 1000
 !
 vrf definition Mgmt-intf
  !
@@ -419,7 +459,19 @@ line vty 1 4
 pnp profile apicem-pnp
  transport http ipv4 100.64.31.100 port 80
  reconnect 1
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
@@ -438,6 +490,7 @@ end</entry>
 version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -447,7 +500,19 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
 !
+license accept end user agreement
+license smart enable
+platform hardware throughput level MB 1000
 vrf definition Mgmt-intf
  !
  address-family ipv4
@@ -595,6 +660,8 @@ ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 control-plane
 !
@@ -620,7 +687,19 @@ line vty 0 16
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
  reconnect 1
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
@@ -637,6 +716,7 @@ end</entry>
 version 16.4
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -646,6 +726,19 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
+!
+license accept end user agreement
+license smart enable
+platform hardware throughput level MB 1000
 !
 vrf definition Mgmt-intf
  !
@@ -820,6 +913,8 @@ ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 control-plane
 !
@@ -845,7 +940,19 @@ ntp server 172.16.1.2
 !
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80 source BDI10
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
@@ -866,6 +973,7 @@ end</entry>
 version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -875,7 +983,19 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
 !
+license accept end user agreement
+license smart enable
+platform hardware throughput level MB 1000
 vrf definition Mgmt-intf
  !
  address-family ipv4
@@ -1024,6 +1144,8 @@ ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 control-plane
 !
@@ -1053,7 +1175,19 @@ transport input ssh
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
  reconnect 1
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
@@ -1070,6 +1204,7 @@ end</entry>
 version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -1079,6 +1214,15 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
 !
 vrf definition Mgmt-intf
  !
@@ -1309,6 +1453,8 @@ ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 control-plane
 !
@@ -1333,7 +1479,19 @@ ntp server 172.16.1.2
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80 source BDI10
  reconnect 1
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
@@ -1352,6 +1510,7 @@ end</entry>
 version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -1361,7 +1520,19 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
 !
+license accept end user agreement
+license smart enable
+platform hardware throughput level MB 1000
 vrf definition Mgmt-intf
  !
  address-family ipv4
@@ -1511,6 +1682,8 @@ ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 control-plane
 !
@@ -1538,7 +1711,19 @@ line vty 5 16
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
  reconnect 1
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
@@ -1555,6 +1740,7 @@ end</entry>
 version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -1564,6 +1750,19 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
+!
+license accept end user agreement
+license smart enable
+platform hardware throughput level MB 1000
 !
 vrf definition Mgmt-intf
  !
@@ -1713,6 +1912,8 @@ ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 control-plane
 !
@@ -1738,7 +1939,19 @@ line vty 0 16
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
  reconnect 1
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
@@ -1935,7 +2148,7 @@ line vty 0 16
 event manager applet POST_PNP
 event timer countdown time 30
 action 1.0 cli command "enable"
-action 1.1 cli command "license smart register idtoken NjU5Yzk1NTEtZjJlOC00MzU3LTg0MjMtMzZjMzNlODgwYmQ1LTE0OTA4MDEz%0ANDI1NzF8VWhtaUI3S3U1emZSVzFJT0psU092U1VlUmhjenpHVGw0dmFEdW1H%0AOFg2Yz0%3D%0A"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
 action 1.8 cli command "config t"
 action 2.3 cli command "no event manager applet POST_PNP"
 action 2.8 cli command "end"
@@ -2073,12 +2286,10 @@ line vty 0 16
  login local
  transport intput ssh
 !
-!
-!
 event manager applet POST_PNP
 event timer countdown time 30
 action 1.0 cli command "enable"
-action 1.1 cli command "license smart register idtoken NjU5Yzk1NTEtZjJlOC00MzU3LTg0MjMtMzZjMzNlODgwYmQ1LTE0OTA4MDEz%0ANDI1NzF8VWhtaUI3S3U1emZSVzFJT0psU092U1VlUmhjenpHVGw0dmFEdW1H%0AOFg2Yz0%3D%0A"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
 action 1.8 cli command "config t"
 action 2.3 cli command "no event manager applet POST_PNP"
 action 2.8 cli command "end"
@@ -2102,6 +2313,7 @@ action 4.0 cli command "exit"
 version 16.4
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -2111,7 +2323,19 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.04b.S.155-3.S4b-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
 !
+license accept end user agreement
+license smart enable
+platform hardware throughput level MB 1000
 vrf definition Mgmt-intf
  !
  address-family ipv4
@@ -2268,6 +2492,8 @@ ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 control-plane
 !
@@ -2301,13 +2527,25 @@ line vty 2 4
 !
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3"/>
         <interface id="2" name="GigabitEthernet4"/>
     </node>
-    <node name="R41" type="SIMPLE" subtype="CSR1000v" location="368,544">
+    <node name="R41" type="SIMPLE" subtype="CSR1000v" location="368,544" vmImage="CSR1000v-ISRv [b2b4f4db-0509-4490-a0c9-422cfad8eec7]">
         <extensions>
             <entry key="static_mac" type="String">fa:16:00:00:41:00</entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
@@ -2602,7 +2840,7 @@ line vty 0 16
 event manager applet POST_PNP
 event timer countdown time 30
 action 1.0 cli command "enable"
-action 1.1 cli command "license smart register idtoken NjU5Yzk1NTEtZjJlOC00MzU3LTg0MjMtMzZjMzNlODgwYmQ1LTE0OTA4MDEz%0ANDI1NzF8VWhtaUI3S3U1emZSVzFJT0psU092U1VlUmhjenpHVGw0dmFEdW1H%0AOFg2Yz0%3D%0A"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
 action 1.8 cli command "config t"
 action 2.3 cli command "no event manager applet POST_PNP"
 action 2.8 cli command "end"
@@ -2626,6 +2864,7 @@ action 4.0 cli command "exit"
 version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -2635,6 +2874,19 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
+!
+license accept end user agreement
+license smart enable
+platform hardware throughput level MB 1000
 !
 vrf definition Mgmt-intf
  !
@@ -2757,6 +3009,8 @@ ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 control-plane
 !
@@ -2787,7 +3041,19 @@ line vty 1 4
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
  reconnect 1
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2">
             <extensions>
@@ -2806,6 +3072,7 @@ end</entry>
 version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime localtime show-timezone
+service call-home
 no platform punt-keepalive disable-kernel-core
 platform console serial
 !
@@ -2815,6 +3082,15 @@ boot-start-marker
 boot system flash bootflash:csr1000v-universalk9.03.16.05.S.155-3.S5-ext.SPA.bin
 boot-end-marker
 !
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ http-proxy "64.102.249.14" port 80
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email 
 !
 vrf definition Mgmt-intf
  !
@@ -2942,6 +3218,8 @@ ntp server 172.16.1.2
 snmp-server community public RO
 snmp-server community private RW
 !
+snmp-server group authPriv v3 priv
+snmp-server user admin authPriv v3 auth sha Torlab123 priv aes 128 Torlab123
 !
 control-plane
 !
@@ -2970,7 +3248,19 @@ line vty 1 4
 pnp profile apicem-pnp
  transport http ipv4 172.16.1.100 port 80
  reconnect 1
-end</entry>
+end
+!
+event manager applet POST_PNP
+event timer countdown time 30
+action 1.0 cli command "enable"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
+action 1.8 cli command "config t"
+action 2.3 cli command "no event manager applet POST_PNP"
+action 2.8 cli command "end"
+action 2.9 cli command "wr mem"
+action 3.0 cli command "end"
+action 4.0 cli command "exit"
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
     </node>
@@ -3408,7 +3698,7 @@ ntp server 172.16.1.100
 event manager applet POST_PNP
 event timer countdown time 30
 action 1.0 cli command "enable"
-action 1.1 cli command "license smart register idtoken NjU5Yzk1NTEtZjJlOC00MzU3LTg0MjMtMzZjMzNlODgwYmQ1LTE0OTA4MDEz%0ANDI1NzF8VWhtaUI3S3U1emZSVzFJT0psU092U1VlUmhjenpHVGw0dmFEdW1H%0AOFg2Yz0%3D%0A"
+action 1.1 cli command "license smart register idtoken NmRjNzI5ODktZjE5My00ZjNlLWI5NDUtODkxOTQ3NTkxMmFiLTE1MjMyOTM0%0AODAzMTl8YUY5U0VKKy9DODA1M2NyVGU1bDdTV2k5Q25TR2hsUldyMGYxRlly%0ANVRwaz0%3D%0A"
 action 1.8 cli command "config t"
 action 2.3 cli command "no event manager applet POST_PNP"
 action 2.8 cli command "end"

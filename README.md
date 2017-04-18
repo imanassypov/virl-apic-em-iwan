@@ -22,7 +22,7 @@ What things you need to install the software and how to install them
 ```
 Software:
 
-1. Cisco IOS XE Software, Version 03.16.05.S - Extended Support Release, in qcow2 format
+1. Cisco IOS XE Software, CSR1000v, Version 16.03.03, in qcow2 format
 2. Cisco Smart License AX evaluation licenses for CSR1000v router. These are required to enable 1Gbps throughput on this platform as non-licensed default installation gives you only 100kbps
 3. APIC-EM Version 1.4.0.1959
 4. ViRL 1.2.83 - this is the simulation platform
